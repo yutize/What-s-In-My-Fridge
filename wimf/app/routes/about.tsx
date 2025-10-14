@@ -4,7 +4,7 @@ import { About } from "../pages/about/about";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "About" },
-    { name: "about", content: "Learn more about us." },
+    { name: "description", content: "Learn more about us." },
   ];
 }
 
