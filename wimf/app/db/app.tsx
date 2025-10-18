@@ -12,9 +12,10 @@ export function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS Users (
       user_id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT NOT NULL UNIQUE,
-      password_hash TEXT NOT NULL,
+      firstName TEXT NOT NULL,
+      lastName TEXT NOT NULL,
+      password TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
-      age INTEGER,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
  
