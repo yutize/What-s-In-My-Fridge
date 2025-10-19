@@ -6,9 +6,13 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
+import { initializeDatabase } from "./db/app";
 import type { Route } from "./+types/root";
 import "./app.css";
+
+if (typeof document === "undefined") {
+  initializeDatabase();
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
