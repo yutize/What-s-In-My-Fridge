@@ -1,7 +1,7 @@
 import type { Route } from "../../routes/+types/home";
 import { redirect } from "react-router";
-import { db } from "../../db/app";
-import bcrypt, { hash } from "bcryptjs";
+import { validateLoginCredentials } from "./loginValidator";
+
 
 export async function handleLogin({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -10,19 +10,13 @@ export async function handleLogin({ request }: Route.ActionArgs) {
 
   console.log("Login attempt for:", username);
 
-  const user = db.prepare("SELECT * FROM Users WHERE username = ?").get(username) as any;
+  const validation = validateLoginCredentials(username, password);
 
-  if (!user) {
-    return { error: "Invalid username or password" };
-  }
-
-  const isPasswordValid = bcrypt.compareSync(password, user.password);
-
-  if (!isPasswordValid) {
-    console.log("Invalid password for user:", username);
-    return { error: "Invalid username or password" };
+  if (!validation.isValid) {
+    return { error: validation.error };
   }
 
   console.log("Login successful for:", username);
+
   return redirect("/dashboard");
 }
