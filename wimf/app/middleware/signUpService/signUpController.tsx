@@ -22,7 +22,7 @@ export async function handleSignUp({ request }: Route.ActionArgs) {
   }
 
   const salt = bcrypt.genSaltSync(10);
-  const hash = bcrypt.hashSync(password, salt, (err, hash));
+  const hash = bcrypt.hashSync(password, salt);
   console.log("password before", password);
   console.log("Inserting user with hashed password:", hash );
   db.prepare("INSERT INTO Users (username, firstName, lastName, password, email) VALUES (?, ?, ?, ?, ?)")

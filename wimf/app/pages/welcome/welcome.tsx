@@ -32,15 +32,14 @@ export function Welcome() {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
                 >
-                  Email
+                  Username
                 </label>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
+                  type="text"
+                  id="username"
+                  name="username"
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  placeholder="you@example.com"
                 />
               </div>
 
@@ -57,7 +56,6 @@ export function Welcome() {
                   name="password"
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  placeholder="••••••••"
                 />
               </div>
 
