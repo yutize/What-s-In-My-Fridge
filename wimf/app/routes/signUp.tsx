@@ -1,5 +1,5 @@
 import { SignUp } from "~/pages/signUpPage/signUp";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/signUp";
 import { handleSignUp } from "~/middleware/signUpService/signUpController";
 
 export function meta({}: Route.MetaArgs) {
