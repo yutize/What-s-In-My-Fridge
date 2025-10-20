@@ -1,4 +1,4 @@
-import type { Route } from "../../routes/+types/home";
+import type { Route } from "../../routes/+types/signUp";
 import { redirect } from "react-router";
 import { db } from "../../db/app";
 import { validateSignUpInfo } from "../../middleware/signUpService/infoValidation";
