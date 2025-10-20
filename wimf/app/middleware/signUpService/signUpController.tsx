@@ -28,4 +28,5 @@ export async function handleSignUp({ request }: Route.ActionArgs) {
   db.prepare("INSERT INTO Users (username, firstName, lastName, password, email) VALUES (?, ?, ?, ?, ?)")
     .run(username, firstName, lastName, hash, email);
 
+  return redirect("/");
 }
