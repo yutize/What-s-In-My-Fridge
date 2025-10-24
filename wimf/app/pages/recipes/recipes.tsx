@@ -3,7 +3,7 @@ import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 import { Navbar } from "~/components/navbar/navbar";
 
-export function Dashboard( { user }: { user: any }) {
+export function Recipes() {
   return (
     <>
    <Navbar />
@@ -12,7 +12,7 @@ export function Dashboard( { user }: { user: any }) {
       {/* Welcome Banner */}
       <div className="w-full">
         <div className="rounded-3xl border border-gray-200 p-8 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Welcome back, {user}!</h1>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Welcome back,!</h1>
           <h2 className="text-xl text-gray-600 dark:text-gray-400">Ready to create something delicious today?</h2>
         </div>
       </div>
