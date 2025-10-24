@@ -1,7 +1,7 @@
 import { Form } from "react-router";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
-import { Navbar } from "~/components/navbar/navbar";
+import { Navbar } from "~/components/navbar/navbar/navbar";
 
 export function Dashboard( { user }: { user: any }) {
   return (
