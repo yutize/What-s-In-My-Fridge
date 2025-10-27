@@ -11,7 +11,7 @@ export function Dashboard( { user }: { user: any }) {
     <main className="flex flex-col items-center px-6 py-8 gap-6 max-w-[1400px] mx-auto">
       {/* Welcome Banner */}
       <div className="w-full">
-        <div className="rounded-3xl border border-gray-200 p-8 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+        <div className="rounded-3xl border border-gray-200 p-8 dark:border-gray-700 welcome-gradient bg-transparent dark:bg-transparent shadow-lg">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Welcome back, {user}!</h1>
           <h2 className="text-xl text-gray-600 dark:text-gray-400">Ready to create something delicious today?</h2>
         </div>
@@ -20,7 +20,7 @@ export function Dashboard( { user }: { user: any }) {
       {/* My Fridge & This Week's Meals Row */}
       <div className="w-full grid grid-cols-2 gap-6">
         {/* My Fridge */}
-        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg flex flex-col h-[300px]">
+        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 shadow-lg flex flex-col h-[300px]">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">My Fridge</h2>
             <a href="#" className="text-sm text-blue-600 hover:underline dark:text-blue-400">View All</a>
@@ -35,7 +35,7 @@ export function Dashboard( { user }: { user: any }) {
         </div>
 
         {/* This Week's Meals */}
-        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg flex flex-col h-[300px]">
+        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 shadow-lg flex flex-col h-[300px]">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">This Week's Meals</h2>
             <a href="#" className="text-sm text-blue-600 hover:underline dark:text-blue-400">View All</a>
@@ -59,7 +59,7 @@ export function Dashboard( { user }: { user: any }) {
 
       {/* Recommended for You */}
       <div className="w-full">
-        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 shadow-lg">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recommended for You</h2>
             <a href="#" className="text-sm text-blue-600 hover:underline dark:text-blue-400">See All Recipes</a>
@@ -84,7 +84,7 @@ export function Dashboard( { user }: { user: any }) {
       {/* Today's Nutrition & Quick Actions Row */}
       <div className="w-full grid grid-cols-2 gap-6">
         {/* Today's Nutrition */}
-        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg h-[300px]">
+        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 shadow-lg h-[300px]">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Today's Nutrition</h2>
             <a href="#" className="text-sm text-blue-600 hover:underline dark:text-blue-400">View Details</a>
@@ -110,7 +110,7 @@ export function Dashboard( { user }: { user: any }) {
         </div>
 
         {/* Quick Actions */}
-        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg h-[300px]">
+        <div className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 shadow-lg h-[300px]">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-200 dark:bg-gray-700 rounded-lg h-[100px]"></div>
