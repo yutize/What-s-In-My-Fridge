@@ -1,8 +1,7 @@
-import type { Route } from "./+types/dashboard";
+import type { Route } from "./+types/nutrition";
 import { requireUserId, getUserId } from "~/session.server";
 import { Nutrition } from "../pages/nutrition/nutrition";
-import { db } from "~/db/app";
-
+import { handleUpdateNutrition } from "../middleware/NutritionService/nutritionController";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Nutrition" },
@@ -11,9 +10,11 @@ export function meta({}: Route.MetaArgs) {
 }
 export async function loader({ request }: Route.LoaderArgs) {
   await requireUserId(request);
-
 }
 
+export async function action(args: Route.ActionArgs) {
+  handleUpdateNutrition(args);
+}
 export default function NutritionRoute() {
   return <Nutrition />;
 } 

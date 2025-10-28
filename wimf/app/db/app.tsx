@@ -48,7 +48,7 @@ export function initializeDatabase() {
       fat INTEGER,
       allergy STRING,
       preference STRING,
-      FOREIGN KEY (user_id) REFERENCES Users(user_id),
+      FOREIGN KEY (user_id) REFERENCES Users(user_id)
     );
   `);
 }
