@@ -38,6 +38,18 @@ export function initializeDatabase() {
       FOREIGN KEY (user_id) REFERENCES Users(user_id),
       FOREIGN KEY (ingredient_id) REFERENCES Ingredients(ingredient_id)
     );
+
+    CREATE TABLE IF NOT EXISTS NutritionProfile (
+      nutrition_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      calories INTEGER,
+      protein INTEGER,
+      carbs INTEGER,
+      fat INTEGER,
+      allergy STRING,
+      preference STRING,
+      FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    );
   `);
 }
 
