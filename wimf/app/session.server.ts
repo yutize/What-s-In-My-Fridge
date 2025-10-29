@@ -16,6 +16,7 @@ export async function getUserId(request: Request) {
     const session = await sessionStorage.getSession( 
         request.headers.get("Cookie")
     );
+    console.log(session.get("userId"));
     return session.get("userId");
 }
 

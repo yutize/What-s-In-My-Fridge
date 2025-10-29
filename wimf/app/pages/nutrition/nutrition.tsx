@@ -68,7 +68,7 @@ export function Nutrition() {
               <CheckboxOption name="allergies" value="soy" label="Soy" />
               <CheckboxOption name="allergies" value="gluten" label="Gluten" />
               <CheckboxOption name="allergies" value="sesame" label="Sesame" />
-              <CheckboxOption name="allergies" value="lactose" label="Lactose" />
+              <CheckboxOption name="allergies" value="peanuts" label="Peanuts" />
             </div>
           </SectionCard>
 
@@ -80,10 +80,10 @@ export function Nutrition() {
               <CheckboxOption name="diet" value="pescatarian" label="Pescatarian" />
               <CheckboxOption name="diet" value="keto" label="Keto" />
               <CheckboxOption name="diet" value="paleo" label="Paleo" />
-              <CheckboxOption name="diet" value="lowcarb" label="Low Carb" />
-              <CheckboxOption name="diet" value="halal" label="Halal" />
+              <CheckboxOption name="diet" value="Mediterranean" label="Halal" />
               <CheckboxOption name="diet" value="kosher" label="Kosher" />
-              <CheckboxOption name="diet" value="whole30" label="Whole30" />
+              <CheckboxOption name="diet" value="pork-free" label="No Pork" />
+              <CheckboxOption name="diet" value="red-meat-free" label="No Red Meat" />
             </div>
           </SectionCard>
 
