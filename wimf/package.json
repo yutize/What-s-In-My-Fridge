@@ -12,6 +12,7 @@
     "@react-router/node": "^7.9.4",
     "@react-router/serve": "^7.9.2",
     "@types/bcryptjs": "^2.4.6",
+    "axios": "^1.13.1",
     "bcryptjs": "^3.0.2",
     "better-sqlite3": "^12.4.1",
     "isbot": "^5.1.31",
