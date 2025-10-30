@@ -13,3 +13,6 @@ app.db-wal
 *.db
 *.db-shm
 *.db-wal
+
+# Environment variables
+.env
