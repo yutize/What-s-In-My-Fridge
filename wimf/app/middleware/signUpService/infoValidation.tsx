@@ -1,4 +1,4 @@
-import { db } from "../../db/app";
+import { db } from "../../db/app.server";
 
 export async function  validateSignUpInfo(username: string, firstName: string, lastName: string, password: string, confirmationPassword: string, email: string, confirmationEmail: string) {
     const doesEmailMatch = email === confirmationEmail;
