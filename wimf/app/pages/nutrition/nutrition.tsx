@@ -24,41 +24,48 @@ export function Nutrition() {
 
         <Form method="post" className="w-full space-y-6">
           {/* Daily Nutritional Goals */}
-          <SectionCard title="Daily Nutritional Goals">
+          <SectionCard title="Daily Meal Nutritional Goals" subtitle="Set your desired daily nutritional goal for each a meal.">
             <div className="grid grid-cols-2 gap-6">
               <NutritionInput
-                label="Daily Calories"
-                id="calories"
-                name="calories"
-                placeholder="2000"
+                label="Desired Calories Minimum"
+                id="caloriesLow"
+                name="caloriesLow"
+                placeholder="Minimum amount of calories."
+                unit="kcal"
+              />
+              <NutritionInput
+                label="Desired Calories Maximum"
+                id="caloriesHigh"
+                name="caloriesHigh"
+                placeholder="Maximum amount of calories."
                 unit="kcal"
               />
               <NutritionInput
                 label="Protein"
                 id="protein"
                 name="protein"
-                placeholder="150"
+                placeholder="35"
                 unit="g"
               />
               <NutritionInput
                 label="Carbohydrates"
                 id="carbs"
                 name="carbs"
-                placeholder="200"
+                placeholder="40"
                 unit="g"
               />
               <NutritionInput
                 label="Fat"
                 id="fat"
                 name="fat"
-                placeholder="65"
+                placeholder="10"
                 unit="g"
               />
             </div>
           </SectionCard>
 
           {/* Allergies & Intolerances */}
-          <SectionCard title="Allergies & Intolerances">
+          <SectionCard title="Allergies & Intolerances" subtitle="Tell us about any of your allergies or food intolerances.">
             <div className="grid grid-cols-3 gap-4">
               <CheckboxOption name="allergies" value="nuts" label="Nuts" />
               <CheckboxOption name="allergies" value="dairy" label="Dairy" />
@@ -73,7 +80,7 @@ export function Nutrition() {
           </SectionCard>
 
           {/* Dietary Preferences */}
-          <SectionCard title="Dietary Preferences">
+          <SectionCard title="Dietary Preferences" subtitle="Select any dietary preferences you follow.">
             <div className="grid grid-cols-3 gap-4">
               <CheckboxOption name="diet" value="vegetarian" label="Vegetarian" />
               <CheckboxOption name="diet" value="vegan" label="Vegan" />

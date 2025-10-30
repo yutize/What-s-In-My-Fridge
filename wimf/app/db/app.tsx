@@ -42,7 +42,8 @@ export function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS NutritionProfile (
       nutrition_id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      calories INTEGER,
+      caloriesLow INTEGER,
+      caloriesHigh INTEGER,
       protein INTEGER,
       carbs INTEGER,
       fat INTEGER,

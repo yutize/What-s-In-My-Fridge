@@ -3,7 +3,8 @@ import { db } from "../../db/app";
 
 export async function handleUpdateNutrition({ request }: ActionFunctionArgs, userId: number) {
   const formData = await request.formData();
-  const calories = formData.get("calories");
+  const caloriesLow = formData.get("caloriesLow");
+  const caloriesHigh = formData.get("caloriesHigh");
   const id = userId
   const protein = formData.get("protein");
   const carbs = formData.get("carbs");
@@ -15,7 +16,8 @@ export async function handleUpdateNutrition({ request }: ActionFunctionArgs, use
 
   console.log({
     id,
-    calories,
+    caloriesLow,
+    caloriesHigh,
     protein,
     carbs,
     fat,
@@ -24,7 +26,7 @@ export async function handleUpdateNutrition({ request }: ActionFunctionArgs, use
   });
 
   db.prepare(`
-    INSERT INTO NutritionProfile (user_id, calories, protein, carbs, fat, allergy, preference)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(id, calories, protein, carbs, fat, JSON.stringify(allergies), JSON.stringify(diet));
+    INSERT INTO NutritionProfile (user_id, caloriesLow, caloriesHigh, protein, carbs, fat, allergy, preference)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(id, caloriesLow, caloriesHigh, protein, carbs, fat, JSON.stringify(allergies), JSON.stringify(diet));
   }
