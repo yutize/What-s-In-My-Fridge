@@ -11,10 +11,10 @@ export function meta({}: Route.MetaArgs) {
 }
 export async function loader({ request }: Route.LoaderArgs) {
   await requireUserId(request);
-  const user = db.prepare(`SELECT firstName FROM Users WHERE user_id = ?`).get(await getUserId(request));
+  const user = db.prepare(`SELECT firstName FROM Users WHERE user_id = ?`).get(await getUserId(request)) as { firstName: string } | undefined;
   return { user };
 }
 
 export default function DashboardRoute({ loaderData }: Route.ComponentProps) {
-  return <Dashboard user={loaderData.user.firstName} />;
+  return <Dashboard user={loaderData.user?.firstName || "User"} />;
 }
