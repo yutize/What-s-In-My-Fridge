@@ -15,9 +15,18 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 }
 
-  export async function action(args: Route.ActionArgs) {
-    handleRecipeSearch(args);
-  }
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  const ingredients = formData.getAll('ingredient') as string[];
+    
+  const results = await handleRecipeSearch({
+    query: ingredients,
+  });
+  
+  console.log('Recipe results:', results);
+  
+  return { recipes: results };
+}
 
 
 export default function RecipesRoute() {

@@ -11,7 +11,6 @@ export function Recipes() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock recipes data - replace with actual data from loader
   const mockRecipes = Array(12).fill(null).map((_, i) => ({
     label: `Recipe ${i + 1}`,
     image: "https://via.placeholder.com/300x200",
