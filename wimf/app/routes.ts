@@ -7,4 +7,5 @@ export default [
     route("dashboard", "routes/dashboard.tsx"),
     route("logout", "routes/logout.tsx"),
     route("recipes", "routes/recipes.tsx"),
+    route("nutrition", "routes/nutrition.tsx"),
 ] satisfies RouteConfig;

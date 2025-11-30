@@ -8,7 +8,7 @@ export function Navbar() {
         <ul className="menu menu-horizontal px-1">
           <li><a href="/dashboard">Dashboard</a></li>
           <li><a href="/recipes">Recipes</a></li>
-          <li><a>Nutrition</a></li>
+          <li><a href="/nutrition">Nutrition</a></li>
           <li><a>Meal Plans</a></li>
 
           <li>
