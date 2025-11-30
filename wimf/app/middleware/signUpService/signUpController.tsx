@@ -1,4 +1,4 @@
-import type { Route } from "../../routes/+types/home";
+import type { Route } from "../../routes/+types/signUp";
 import { redirect } from "react-router";
 import { db } from "../../db/app";
 import { validateSignUpInfo } from "../../middleware/signUpService/infoValidation";
@@ -28,4 +28,5 @@ export async function handleSignUp({ request }: Route.ActionArgs) {
   db.prepare("INSERT INTO Users (username, firstName, lastName, password, email) VALUES (?, ?, ?, ?, ?)")
     .run(username, firstName, lastName, hash, email);
 
+  return redirect("/");
 }
