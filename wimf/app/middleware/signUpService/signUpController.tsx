@@ -1,6 +1,6 @@
 import type { Route } from "../../routes/+types/signUp";
 import { redirect } from "react-router";
-import { db } from "../../db/app";
+import { db } from "../../db/app.server";
 import { validateSignUpInfo } from "../../middleware/signUpService/infoValidation";
 import bcrypt from "bcryptjs";
 
