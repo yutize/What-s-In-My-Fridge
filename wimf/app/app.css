@@ -6,40 +6,50 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-/* welcome banner gradient */
+/* welcome banner gradient*/
 .welcome-gradient {
-background-image: linear-gradient(90deg, #10B981 0%, #059669 100%);
+  background-image: linear-gradient(90deg, #10B981 0%, #059669 100%);
 }
+
 .welcome-gradient a,
 .welcome-gradient p,
 .welcome-gradient span,
 .welcome-gradient h1,
 .welcome-gradient h2 {
-  color:inherit;
+  color: inherit; 
 }
 
-body {
-  @apply bg-transparent;
-  /* background gradient */
-  background-image: linear-gradient(135deg, rgba(165, 245, 165, 0.4) 0%, rgba(11,219,171,0.4) 61%, rgba(11, 112, 84, 0.4) 87%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-  min-height: 100vh;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    color-scheme: dark;
-  }
-}
-
-/* sign-in box right-side gradient (used by Welcome sign-in) */
+/* signin gradient for login page */
 .signin-gradient {
-  background-image: linear-gradient(135deg, #189E55 0%, #3ED09D 100%);
+  background-image: linear-gradient(135deg, #269b59 0%, #1e7e48 100%);
 }
 
 .signin-gradient h2,
 .signin-gradient p {
-  color: white;
+  color: inherit;
+}
+
+/* Custom shadow for dashboard boxes */
+.box-shadow-custom {
+  box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* Smaller shadow for recipe cards */
+.box-shadow-small {
+  box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.25);
+}
+
+html,
+body {
+  @apply bg-white dark:bg-white;
+
+  /* background gradient */
+  background-image: linear-gradient(135deg, rgba(183,255,183,0.4) 0%, rgba(13,255,199,0.4) 61%, rgba(15,209,153,0.4) 81%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
 }

@@ -1,7 +1,7 @@
 import type { Route } from "./+types/dashboard";
 import { Dashboard } from "../pages/dashboard/dashboard";
 import { requireUserId, getUserId } from "~/session.server";
-import { db } from "~/db/app";
+import { db } from "~/db/app.server";
 
 export function meta({}: Route.MetaArgs) {
   return [

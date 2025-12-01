@@ -1,4 +1,4 @@
-import { db } from "../../db/app";
+import { db } from "../../db/app.server";
 
 export interface User {
   user_id: number;

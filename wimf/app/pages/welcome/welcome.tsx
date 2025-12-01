@@ -19,7 +19,7 @@ export function Welcome() {
               className="hidden w-full dark:block"
             />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+          <h1 className="text-3xl font-bold" style={{color: '#047857'}}>
             Welcome Back
           </h1>
         </header>
@@ -91,10 +91,19 @@ export function Welcome() {
               </div>
 
               {/* Right: gradient panel */}
-              <div className="hidden md:flex md:w-1/2 signin-gradient items-center justify-center p-8">
-                <div className="text-center px-4">
-                  <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
-                  <p className="mt-2 text-white/90">Sign in to manage your fridge inventory.</p>
+              <div className="hidden md:flex md:w-1/2 signin-gradient items-center justify-center p-8 relative overflow-hidden">
+                {/* Decorative bubbles */}
+                <div className="absolute w-32 h-32 rounded-full bg-white opacity-5 top-10 left-10"></div>
+                <div className="absolute w-24 h-24 rounded-full bg-white opacity-5 bottom-20 right-16"></div>
+                <div className="absolute w-16 h-16 rounded-full bg-white opacity-5 top-1/2 right-10"></div>
+                <div className="absolute w-20 h-20 rounded-full bg-white opacity-5 bottom-10 left-1/4"></div>
+                
+                <div className="flex flex-col items-center justify-center gap-6 relative z-10">
+                  <img src="/recipes/cuttingboard.jpg" alt="Cutting Board" className="w-48 h-48 object-cover rounded-lg shadow-lg" />
+                  <div className="text-center px-4">
+                    <h2 className="text-2xl font-bold text-white">Smart Cooking Made Simple</h2>
+                    <p className="mt-2 text-white/90">Transform your ingredients into meals with AI-powered recipe suggestions, meal planning, and nutrition tracking.</p>
+                  </div>
                 </div>
               </div>
             </div>

@@ -2,7 +2,7 @@ import type { Route } from "./+types/nutrition";
 import { requireUserId, getUserId } from "~/session.server";
 import { Nutrition } from "../pages/nutrition/nutrition";
 import { handleUpdateNutrition } from "../middleware/NutritionService/nutritionController";
-import { db } from "~/db/app";
+import { db } from "~/db/app.server";
 import { useLoaderData } from "react-router";
 export function meta({}: Route.MetaArgs) {
   return [
