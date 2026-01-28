@@ -19,12 +19,12 @@ export async function handleLogin({ request }: Route.ActionArgs) {
   console.log("Login attempt for:", username);
 
   const validation = validateLoginCredentials(username, password);
-  console.log("Validation result:", validation.user.user_id);
 
   if (!validation.isValid) {
     return { error: validation.error };
   }
 
+  console.log("Validation result:", validation.user.user_id);
   console.log("Login successful for:", username);
   const sessionResponse = await createUserSession(validation.user.user_id, "/dashboard");
   console.log("Session created, redirecting...", sessionResponse);

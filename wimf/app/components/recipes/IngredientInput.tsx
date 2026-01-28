@@ -36,12 +36,13 @@ export function IngredientInput({ ingredients, onIngredientsChange }: Ingredient
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Enter an ingredient (e.g., chicken, rice)"
-          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
         />
         <button
           type="button"
           onClick={handleAddIngredient}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+          className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition font-medium"
+          style={{ backgroundColor: '#269b59' }}
         >
           Add
         </button>
@@ -50,7 +51,7 @@ export function IngredientInput({ ingredients, onIngredientsChange }: Ingredient
       {/* Ingredient Tags */}
       {ingredients.length > 0 && (
         <div className="mb-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+          <p className="text-sm text-gray-700 dark:text-gray-700 mb-2">
             Selected Ingredients:
           </p>
           <div className="flex flex-wrap gap-2">

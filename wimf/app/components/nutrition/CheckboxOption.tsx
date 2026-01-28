@@ -11,9 +11,9 @@ export function CheckboxOption({ name, value, label }: CheckboxOptionProps) {
         type="checkbox"
         name={name}
         value={value}
-        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        className="w-4 h-4 border border-gray-300 rounded bg-gray-100 appearance-none cursor-pointer checked:bg-green-600 checked:border-green-600 focus:ring-2 focus:ring-green-500"
       />
-      <span className="text-sm text-gray-700 dark:text-gray-300">{label}</span>
+      <span className="text-sm text-gray-700 dark:text-gray-700">{label}</span>
     </label>
   );
 }
