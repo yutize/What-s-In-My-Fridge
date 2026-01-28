@@ -9,6 +9,7 @@ export function Navbar() {
           <li><a href="/dashboard">Dashboard</a></li>
           <li><a href="/recipes">Recipes</a></li>
           <li><a href="/nutrition">Nutrition</a></li>
+          <li><a href="/ingredients">Ingredient Management</a></li>
           <li><a>Meal Plans</a></li>
 
           <li>
