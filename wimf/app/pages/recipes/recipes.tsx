@@ -1,6 +1,6 @@
-import { Form } from "react-router";
+import { Form, useActionData, useNavigation } from "react-router";
 import { Navbar } from "~/components/navbar/navbar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RecipeCard } from "~/components/recipes/RecipeCard";
 import { IngredientInput } from "~/components/recipes/IngredientInput";
 import { RecipeLoadingGrid } from "~/components/recipes/RecipeLoadingSkeleton";
@@ -9,7 +9,9 @@ import { Pagination } from "~/components/recipes/Pagination";
 export function Recipes() {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const actionData = useActionData<{ recipes: any }>();
+  const navigation = useNavigation();
+  const isLoading = navigation.state === "submitting";
 
   const mockRecipes = [
     {
@@ -157,11 +159,18 @@ export function Recipes() {
       },
     },
   ];
+  const apiRecipes = actionData?.recipes?.hits?.map((hit: any) => hit.recipe) || [];
+
+  useEffect(() => {
+    if (actionData?.recipes) {
+      setCurrentPage(1);
+    }
+  }, [actionData]);
 
   const recipesPerPage = 6;
-  const totalPages = Math.ceil(mockRecipes.length / recipesPerPage);
+  const totalPages = Math.ceil(apiRecipes.length / recipesPerPage);
   const startIndex = (currentPage - 1) * recipesPerPage;
-  const currentRecipes = mockRecipes.slice(startIndex, startIndex + recipesPerPage);
+  const currentRecipes = apiRecipes.slice(startIndex, startIndex + recipesPerPage);
 
   return (
     <>
@@ -219,16 +228,18 @@ export function Recipes() {
         {isLoading && <RecipeLoadingGrid />}
 
         {/* Recipe Results */}
-        {!isLoading && mockRecipes.length > 0 && (
+        {!isLoading && apiRecipes.length > 0 && (
           <>
             <div className="w-full">
               <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700 mb-4">
                 Recipe Results ({mockRecipes.length} found)
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+                Recipe Results ({apiRecipes.length} found)
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {currentRecipes.map((recipe, index) => (
-                  <RecipeCard key={index} recipe={recipe} />
+                  <RecipeCard key={recipe.url || index} recipe={recipe} />
                 ))}
               </div>
             </div>
@@ -243,7 +254,7 @@ export function Recipes() {
         )}
 
         {/* No Results */}
-        {!isLoading && mockRecipes.length === 0 && (
+        {!isLoading && actionData && apiRecipes.length === 0 && (
           <div className="w-full text-center py-12">
             <p className="text-gray-700 dark:text-gray-700 text-lg">
               No recipes found. Try different ingredients!
