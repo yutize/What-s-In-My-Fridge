@@ -8,6 +8,7 @@ export interface RecipeResult {
   label: string;
   image: string;
   url: string;
+  yield: number;
   ingredientLines: string[];
   totalNutrients: {
     ENERC_KCAL: NutrientInfo;
@@ -25,7 +26,10 @@ export interface EdamamResponse {
 }
 
 export interface RecipeSearchParams {
-  query: string | string[]; // Can be single ingredient or array of ingredients
+  query: string | string[]; 
   allergies?: string[];
   mealpreference?: string[];
+  calories?: string; 
+  fat?: string; 
+  carbs?: string; 
 }

@@ -233,6 +233,7 @@ export function Recipes() {
             <div className="w-full">
               <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700 mb-4">
                 Recipe Results ({mockRecipes.length} found)
+              </h2>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
                 Recipe Results ({apiRecipes.length} found)
               </h2>
@@ -257,7 +258,7 @@ export function Recipes() {
         {!isLoading && actionData && apiRecipes.length === 0 && (
           <div className="w-full text-center py-12">
             <p className="text-gray-700 dark:text-gray-700 text-lg">
-              No recipes found. Try different ingredients!
+              No recipes found. Make sure that the ingredient spelling is correct and try again.
             </p>
           </div>
         )}

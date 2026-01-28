@@ -25,22 +25,24 @@ export async function handleRecipeSearch(params: RecipeSearchParams): Promise<Ed
       queryParams.diet = params.mealpreference;
     }
 
+    if (params.calories) {
+      queryParams.calories = params.calories;
+    }
+
+    if (params.fat) {
+      queryParams['nutrients[FAT]'] = params.fat;
+    }
+
+    if (params.carbs) {
+      queryParams['nutrients[CHOCDF]'] = params.carbs;
+    }
 
     const response = await axios.get<EdamamResponse>(BASE_URL, {
       params: queryParams,
+      paramsSerializer: {
+        indexes: null,
+      },
     });
-
-    console.log('Number of hits:', response.data.hits?.length || 0);
-    
-    if (response.data.hits && response.data.hits.length > 0) {
-      response.data.hits.forEach((hit, index) => {
-        console.log('Recipe name:', hit.recipe.label);
-        console.log('Image:', hit.recipe.image);
-        console.log('URL:', hit.recipe.url);
-        console.log('Ingredients:', hit.recipe.ingredientLines);
-        console.log('Nutrients:', JSON.stringify(hit.recipe.totalNutrients, null, 2));
-      });
-    }
 
     return response.data;
   } catch (error) {
