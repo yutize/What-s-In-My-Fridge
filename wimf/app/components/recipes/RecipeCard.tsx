@@ -9,6 +9,7 @@ interface RecipeCardProps {
     label: string;
     image: string;
     url: string;
+    yield: number;
     ingredientLines: string[];
     totalNutrients: {
       ENERC_KCAL: NutrientInfo;
@@ -20,6 +21,12 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
+  const servings = recipe.yield || 1;
+  const caloriesPerServing = Math.round(recipe.totalNutrients.ENERC_KCAL.quantity / servings);
+  const proteinPerServing = Math.round(recipe.totalNutrients.PROCNT.quantity / servings);
+  const carbsPerServing = Math.round(recipe.totalNutrients.CHOCDF.quantity / servings);
+  const fatPerServing = Math.round(recipe.totalNutrients.FAT.quantity / servings);
+
   return (
     <div className="rounded-lg overflow-hidden box-shadow-custom hover:shadow-xl transition bg-white/65 dark:bg-white/65">
       {/* Recipe Image */}
@@ -34,13 +41,19 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         <h3 className="font-bold text-lg mb-2 text-gray-700 dark:text-gray-700">
           {recipe.label}
         </h3>
+        <p className="text-xs text-gray-500 mb-2">{servings} servings</p>
 
-        {/* Nutrition Info */}
+{/* Warning */}
         <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-700">
-          <div>🔥 {Math.round(recipe.totalNutrients.ENERC_KCAL.quantity)} cal</div>
-          <div>💪 {Math.round(recipe.totalNutrients.PROCNT.quantity)}g protein</div>
-          <div>🍞 {Math.round(recipe.totalNutrients.CHOCDF.quantity)}g carbs</div>
-          <div>🥑 {Math.round(recipe.totalNutrients.FAT.quantity)}g fat</div>
+          <div>Below are the nutritional information per serving</div>
+        </div>
+
+        {/* Nutrition Info - Per Serving */}
+        <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-700">
+          <div>🔥 {caloriesPerServing} cal</div>
+          <div>💪 {proteinPerServing}g protein</div>
+          <div>🍞 {carbsPerServing}g carbs</div>
+          <div>🥑 {fatPerServing}g fat</div>
         </div>
 
         {/* Ingredients Preview */}
