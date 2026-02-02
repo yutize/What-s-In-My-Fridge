@@ -18,9 +18,30 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
-  const ingredients = formData.getAll('ingredient') as string[];
-  
+  const actionType = formData.get('actionType') as string;
   const userId = await getUserId(request);
+
+  if (actionType === 'saveRecipe') {
+    const recipeName = formData.get('recipeName') as string;
+    const recipeUrl = formData.get('recipeUrl') as string;
+    const recipeImage = formData.get('recipeImage') as string;
+    const servings = parseInt(formData.get('servings') as string);
+    const ingredients = formData.get('ingredients') as string;
+
+    try {
+      db.prepare(`
+        INSERT INTO RecipeSave (user_id, recipe_name, recipe_url, recipe_image, servings, ingredients)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).run(userId, recipeName, recipeUrl, recipeImage, servings, ingredients);
+
+      return { success: true, message: 'Recipe saved successfully!' };
+    } catch (error) {
+      console.error('Error saving recipe:', error);
+      return { success: false, message: 'Failed to save recipe' };
+    }
+  }
+
+  const ingredients = formData.getAll('ingredient') as string[];
   const nutritionProfile = db.prepare(
     "SELECT * FROM NutritionProfile WHERE user_id = ? ORDER BY nutrition_id DESC LIMIT 1"
   ).get(userId) as { 

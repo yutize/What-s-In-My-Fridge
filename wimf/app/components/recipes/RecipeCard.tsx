@@ -1,3 +1,5 @@
+import { Form } from "react-router";
+
 interface NutrientInfo {
   label: string;
   quantity: number;
@@ -29,12 +31,29 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
 
   return (
     <div className="rounded-lg overflow-hidden box-shadow-custom hover:shadow-xl transition bg-white/65 dark:bg-white/65">
-      {/* Recipe Image */}
-      <img
-        src={recipe.image}
-        alt={recipe.label}
-        className="w-full h-48 object-cover"
-      />
+      {/* Recipe Image with Save Button */}
+      <div className="relative">
+        <img
+          src={recipe.image}
+          alt={recipe.label}
+          className="w-full h-48 object-cover"
+        />
+        <Form method="post">
+          <input type="hidden" name="actionType" value="saveRecipe" />
+          <input type="hidden" name="recipeName" value={recipe.label} />
+          <input type="hidden" name="recipeUrl" value={recipe.url} />
+          <input type="hidden" name="recipeImage" value={recipe.image} />
+          <input type="hidden" name="servings" value={servings} />
+          <input type="hidden" name="ingredients" value={JSON.stringify(recipe.ingredientLines)} />
+          <button
+            type="submit"
+            className="absolute top-2 right-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition shadow-lg"
+            title="Save recipe"
+          >
+            Save
+          </button>
+        </Form>
+      </div>
 
       {/* Recipe Info */}
       <div className="p-4">
