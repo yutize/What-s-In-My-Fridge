@@ -1,4 +1,4 @@
-import type { Route } from "./+types/recipes";
+import type { Route } from "./+types/ingredients";
 import { Ingredients } from "~/pages/ingredients/ingredients";
 
 export function meta({}: Route.MetaArgs) {
