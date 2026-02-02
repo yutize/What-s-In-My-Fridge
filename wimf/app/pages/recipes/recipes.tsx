@@ -179,14 +179,14 @@ export function Recipes() {
       <main className="flex flex-col items-center px-6 py-8 gap-10 max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="w-full">
-          <div className="rounded-3xl p-12 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
-            <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-700 mb-2">
+          <div className="rounded-3xl p-12 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom transition-colors duration-200">
+            <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-100 mb-2">
               Recipe Search
             </h1>
-            <p className="text-gray-700 dark:text-gray-700">
+            <p className="text-gray-700 dark:text-gray-200">
               Find delicious recipes based on your ingredients
             </p>
-            <p className="text-gray-700 dark:text-gray-700">
+            <p className="text-gray-700 dark:text-gray-200">
               Note: If you want to see results based on specific dietary preferences or allergies, please go to the "Nutrition" tab and fill out your preferences.
             </p>
           </div>
@@ -194,8 +194,8 @@ export function Recipes() {
 
         {/* Search Section */}
         <div className="w-full">
-          <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
-            <h2 className="text-xl font-bold text-gray-700 dark:text-gray-700 mb-4">
+          <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom transition-colors duration-200">
+            <h2 className="text-xl font-bold text-gray-700 dark:text-gray-100 mb-4">
               What ingredients do you have?
             </h2>
 
@@ -231,14 +231,12 @@ export function Recipes() {
         {!isLoading && apiRecipes.length > 0 && (
           <>
             <div className="w-full">
-              <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700 mb-4">
-                Recipe Results ({mockRecipes.length} found)
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
                 Recipe Results ({apiRecipes.length} found)
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {currentRecipes.map((recipe, index) => (
+                {currentRecipes.map((recipe: any, index: number) => (
                   <RecipeCard key={recipe.url || index} recipe={recipe} />
                 ))}
               </div>
@@ -256,7 +254,7 @@ export function Recipes() {
         {/* No Results */}
         {!isLoading && actionData && apiRecipes.length === 0 && (
           <div className="w-full text-center py-12">
-            <p className="text-gray-700 dark:text-gray-700 text-lg">
+            <p className="text-gray-700 dark:text-gray-200 text-lg">
               No recipes found. Try different ingredients!
             </p>
           </div>

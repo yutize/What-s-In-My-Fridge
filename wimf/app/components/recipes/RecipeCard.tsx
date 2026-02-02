@@ -21,7 +21,7 @@ interface RecipeCardProps {
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
   return (
-    <div className="rounded-lg overflow-hidden box-shadow-custom hover:shadow-xl transition bg-white/65 dark:bg-white/65">
+    <div className="rounded-lg overflow-hidden box-shadow-custom hover:shadow-xl transition bg-white/65 dark:bg-gray-800">
       {/* Recipe Image */}
       <img
         src={recipe.image}
@@ -31,12 +31,12 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
 
       {/* Recipe Info */}
       <div className="p-4">
-        <h3 className="font-bold text-lg mb-2 text-gray-700 dark:text-gray-700">
+        <h3 className="font-bold text-lg mb-2 text-gray-700 dark:text-gray-100">
           {recipe.label}
         </h3>
 
         {/* Nutrition Info */}
-        <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-700">
+        <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-200">
           <div>🔥 {Math.round(recipe.totalNutrients.ENERC_KCAL.quantity)} cal</div>
           <div>💪 {Math.round(recipe.totalNutrients.PROCNT.quantity)}g protein</div>
           <div>🍞 {Math.round(recipe.totalNutrients.CHOCDF.quantity)}g carbs</div>
@@ -45,10 +45,10 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
 
         {/* Ingredients Preview */}
         <div className="mb-3">
-          <p className="text-xs text-gray-700 dark:text-gray-700 mb-1">
+          <p className="text-xs text-gray-600 dark:text-gray-300 mb-1">
             Ingredients:
           </p>
-          <p className="text-sm text-gray-700 dark:text-gray-700 line-clamp-2">
+          <p className="text-sm text-gray-700 dark:text-gray-200 line-clamp-2">
             {recipe.ingredientLines.join(", ")}
           </p>
         </div>
@@ -58,8 +58,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           href={recipe.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block w-full text-center px-4 py-2 text-white rounded-lg hover:opacity-90 transition font-medium"
-          style={{ backgroundColor: '#269b59' }}
+          className="inline-block w-full text-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition font-medium"
         >
           View Full Recipe →
         </a>

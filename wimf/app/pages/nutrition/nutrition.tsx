@@ -14,9 +14,9 @@ export function Nutrition() {
       <main className="flex flex-col items-center px-6 py-8 gap-10 max-w-[1000px] mx-auto">
         {/* Header */}
         <div className="w-full">
-          <div className="rounded-3xl p-12 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
-            <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-700">My Nutrition Profile</h1>
-            <p className="text-lg text-gray-700 dark:text-gray-700 mt-2">
+          <div className="rounded-3xl p-12 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom transition-colors duration-200">
+            <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-100">My Nutrition Profile</h1>
+            <p className="text-lg text-gray-700 dark:text-gray-200 mt-2">
               Set your daily goals and dietary preferences
             </p>
           </div>
@@ -98,13 +98,13 @@ export function Nutrition() {
           <div className="flex gap-4">
             <button
               type="submit"
-              className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium transition-colors"
+              className="flex-1 bg-emerald-600 text-white py-3 px-6 rounded-lg hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 font-medium transition-colors"
             >
               Save Nutrition Profile
             </button>
             <button
               type="button"
-              className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               Cancel
             </button>
