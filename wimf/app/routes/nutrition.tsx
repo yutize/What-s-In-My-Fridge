@@ -15,7 +15,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action(args: Route.ActionArgs) {
   const userId = await getUserId(args.request);
-  handleUpdateNutrition(args, userId);
+  return handleUpdateNutrition(args, userId);
 }
 export default function NutritionRoute() {
   return <Nutrition />;

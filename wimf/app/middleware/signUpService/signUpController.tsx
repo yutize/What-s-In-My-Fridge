@@ -18,7 +18,7 @@ export async function handleSignUp({ request }: Route.ActionArgs) {
 
   const validationResult = await validateSignUpInfo(username, firstName, lastName, password, confirmationPassword, email, confirmationEmail);
   if ("error" in validationResult) {
-    return { error: validationResult.error };
+    return { errors: { general: validationResult.error } };
   }
 
   const salt = bcrypt.genSaltSync(10);
@@ -28,5 +28,7 @@ export async function handleSignUp({ request }: Route.ActionArgs) {
   db.prepare("INSERT INTO Users (username, firstName, lastName, password, email) VALUES (?, ?, ?, ?, ?)")
     .run(username, firstName, lastName, hash, email);
 
+  // Redirect with success message delay
+  setTimeout(() => {}, 2000);
   return redirect("/");
 }

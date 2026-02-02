@@ -29,4 +29,6 @@ export async function handleUpdateNutrition({ request }: ActionFunctionArgs, use
     INSERT INTO NutritionProfile (user_id, caloriesLow, caloriesHigh, protein, carbs, fat, allergy, preference)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `).run(id, caloriesLow, caloriesHigh, protein, carbs, fat, JSON.stringify(allergies), JSON.stringify(diet));
+  
+  return { success: true, message: 'Nutrition profile saved successfully!' };
   }

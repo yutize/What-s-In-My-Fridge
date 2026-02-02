@@ -1,4 +1,4 @@
-import { Form } from "react-router";
+import { Form, useActionData } from "react-router";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 import { Navbar } from "~/components/navbar/navbar";
@@ -6,7 +6,13 @@ import { NutritionInput } from "~/components/nutrition/NutritionInput";
 import { CheckboxOption } from "~/components/nutrition/CheckboxOption";
 import { SectionCard } from "~/components/nutrition/SectionCard";
 
+interface ActionData {
+  success?: boolean;
+  message?: string;
+}
+
 export function Nutrition() {
+  const actionData = useActionData<ActionData>();
   return (
     <>
       <Navbar />
@@ -21,6 +27,7 @@ export function Nutrition() {
             </p>
           </div>
         </div>
+
 
         <Form method="post" className="w-full space-y-6">
           {/* Daily Nutritional Goals */}
@@ -109,6 +116,14 @@ export function Nutrition() {
               Cancel
             </button>
           </div>
+
+          {/* Success Alert */}
+          {actionData?.success && (
+            <div className="p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+              <p className="font-medium">✓ Nutrition Profile Saved!</p>
+              <p className="text-sm">{actionData.message || 'Your nutritional preferences have been updated successfully.'}</p>
+            </div>
+          )}
         </Form>
       </main>
     </>
