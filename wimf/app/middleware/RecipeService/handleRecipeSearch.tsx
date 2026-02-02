@@ -43,7 +43,6 @@ export async function handleRecipeSearch(params: RecipeSearchParams): Promise<Ed
         indexes: null,
       },
     });
-
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

@@ -51,6 +51,17 @@ export function initializeDatabase() {
       preference STRING,
       FOREIGN KEY (user_id) REFERENCES Users(user_id)
     );
+
+    CREATE TABLE IF NOT EXISTS RecipeSave (
+      recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      recipe_name TEXT NOT NULL,
+      recipe_url TEXT NOT NULL,
+      recipe_image TEXT,
+      servings INTEGER,
+      ingredients TEXT,
+      FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    );
   `);
 }
 

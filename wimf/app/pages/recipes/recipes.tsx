@@ -1,4 +1,4 @@
-import { Form, useActionData, useNavigation } from "react-router";
+import { Form, useActionData, useNavigate, useNavigation } from "react-router";
 import { Navbar } from "~/components/navbar/navbar";
 import { useState, useEffect } from "react";
 import { RecipeCard } from "~/components/recipes/RecipeCard";
@@ -13,152 +13,6 @@ export function Recipes() {
   const navigation = useNavigation();
   const isLoading = navigation.state === "submitting";
 
-  const mockRecipes = [
-    {
-      label: "Lemon Butter Garlic Salmon",
-      image: "/recipes/lemonbuttergarlicsalmon.jpg",
-      url: "#",
-      ingredientLines: ["Salmon", "Lemon", "Butter"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 450, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 25, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 5, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 45, unit: "g" },
-      },
-    },
-    {
-      label: "Marry Me Chicken",
-      image: "/recipes/marrymechicken.jpg",
-      url: "#",
-      ingredientLines: ["Chicken", "Tomato", "Garlic"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 420, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 15, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 20, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 50, unit: "g" },
-      },
-    },
-    {
-      label: "Creamy Pasta Carbonara",
-      image: "/recipes/creamypastacarbanara.jpg",
-      url: "#",
-      ingredientLines: ["Pasta", "Egg", "Bacon"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 520, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 28, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 55, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 20, unit: "g" },
-      },
-    },
-    {
-      label: "Rainbow Salad",
-      image: "/recipes/rainbowsalad.jpeg",
-      url: "#",
-      ingredientLines: ["Lettuce", "Tomato", "Cucumber"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 150, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 5, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 25, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 8, unit: "g" },
-      },
-    },
-    {
-      label: "Creamy Tuscan Pasta",
-      image: "/recipes/tuscanchickenpasta.jpg",
-      url: "#",
-      ingredientLines: ["Pasta", "Chicken", "Cream"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 480, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 20, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 50, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 28, unit: "g" },
-      },
-    },
-    {
-      label: "Mediterranean Chicken Bowls",
-      image: "/recipes/mediterraneanchickenbowls.jpg",
-      url: "#",
-      ingredientLines: ["Chicken", "Hummus", "Feta"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 400, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 18, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 35, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 32, unit: "g" },
-      },
-    },
-    {
-      label: "Soy Ginger Glazed Salmon",
-      image: "/recipes/soygingerglazedsalmon.jpg",
-      url: "#",
-      ingredientLines: ["Salmon", "Soy Sauce", "Ginger"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 460, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 26, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 15, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 48, unit: "g" },
-      },
-    },
-    {
-      label: "Chicken Shawarma Bowl",
-      image: "/recipes/chickenshawarmabowl.jpg",
-      url: "#",
-      ingredientLines: ["Chicken", "Tahini", "Pita"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 480, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 22, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 42, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 35, unit: "g" },
-      },
-    },
-    {
-      label: "Avgolemono",
-      image: "/recipes/avgelemono.jpg",
-      url: "#",
-      ingredientLines: ["Chicken", "Lemon", "Rice"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 280, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 10, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 30, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 22, unit: "g" },
-      },
-    },
-    {
-      label: "Cilantro Lime Shrimp",
-      image: "/recipes/cilantrolimeshrimp.jpg",
-      url: "#",
-      ingredientLines: ["Shrimp", "Cilantro", "Lime"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 200, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 8, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 10, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 28, unit: "g" },
-      },
-    },
-    {
-      label: "Turkey Stuffed Peppers",
-      image: "/recipes/turkeystuffedpeppers.jpg",
-      url: "#",
-      ingredientLines: ["Turkey", "Bell Pepper", "Rice"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 320, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 12, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 28, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 32, unit: "g" },
-      },
-    },
-    {
-      label: "Tteokbokki",
-      image: "/recipes/tteokbokki.jpg",
-      url: "#",
-      ingredientLines: ["Rice Cakes", "Gochujang", "Green Onion"],
-      totalNutrients: {
-        ENERC_KCAL: { label: "Energy", quantity: 340, unit: "kcal" },
-        FAT: { label: "Fat", quantity: 8, unit: "g" },
-        CHOCDF: { label: "Carbs", quantity: 60, unit: "g" },
-        PROCNT: { label: "Protein", quantity: 10, unit: "g" },
-      },
-    },
-  ];
   const apiRecipes = actionData?.recipes?.hits?.map((hit: any) => hit.recipe) || [];
 
   useEffect(() => {
@@ -180,9 +34,20 @@ export function Recipes() {
         {/* Header */}
         <div className="w-full">
           <div className="rounded-3xl p-12 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
-            <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-700 mb-2">
-              Recipe Search
-            </h1>
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-700 mb-2">
+                  Recipe Search
+                </h1>
+              </div>
+              <a
+              href="/savedRecipes"
+                style={{ backgroundColor: '#269b59' }}
+              className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition font-medium shadow-lg"
+            >
+              View Saved Recipes
+            </a>
+            </div>
             <p className="text-gray-700 dark:text-gray-700">
               Find delicious recipes based on your ingredients
             </p>
@@ -232,7 +97,6 @@ export function Recipes() {
           <>
             <div className="w-full">
               <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700 mb-4">
-                Recipe Results ({mockRecipes.length} found)
               </h2>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
                 Recipe Results ({apiRecipes.length} found)
