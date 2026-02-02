@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData, Form } from "react-router";
 import { Navbar } from "~/components/navbar/navbar";
 import { useState } from "react";
 
@@ -9,7 +9,7 @@ interface SavedRecipe {
   recipe_url: string;
   recipe_image: string;
   servings: number;
-  ingredients: string; // JSON string
+  ingredients: string;
 }
 
 export function SavedRecipes() {
@@ -33,7 +33,7 @@ export function SavedRecipes() {
             <div className="flex justify-between items-start mb-2">
               <div>
                 <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-700 mb-2">
-                  📖 My Saved Recipes
+                  My Saved Recipes
                 </h1>
               </div>
               <a
@@ -74,16 +74,22 @@ export function SavedRecipes() {
                           alt={recipe.recipe_name}
                           className="w-full h-48 object-cover"
                         />
-                        <button
-                          onClick={() => {
-                            // TODO: Implement delete functionality
-                            console.log('Delete recipe:', recipe.recipe_id);
-                          }}
-                          className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition shadow-lg"
-                          title="Remove recipe"
-                        >
-                          ✕ Remove
-                        </button>
+                        <Form method="post">
+                          <input type="hidden" name="actionType" value="deleteRecipe" />
+                          <input type="hidden" name="recipeId" value={recipe.recipe_id} />
+                          <button
+                            type="submit"
+                            className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition shadow-lg"
+                            title="Remove recipe"
+                            onClick={(e) => {
+                              if (!confirm('Are you sure you want to remove this recipe?')) {
+                                e.preventDefault();
+                              }
+                            }}
+                          >
+                            ✕ Remove
+                          </button>
+                        </Form>
                       </div>
 
                       {/* Recipe Info */}

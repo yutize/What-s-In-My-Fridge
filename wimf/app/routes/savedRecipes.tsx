@@ -1,8 +1,9 @@
 import type { Route } from "./+types/recipes";
 import { SavedRecipes } from "../pages/savedRecipes/savedRecipes";
 import { requireUserId, getUserId } from "~/session.server";
-import { handleRecipeSearch } from "~/middleware/RecipeService/handleRecipeSearch";
 import { db } from "~/db/app.server";
+import { deleteSavedRecipe } from "~/middleware/RecipeService/deleteSavedRecipe";
+import { redirect } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -22,6 +23,21 @@ export async function loader({ request }: Route.LoaderArgs) {
   console.log('Saved recipes for user:', userId, savedRecipes);
   
   return { savedRecipes };
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const userId = await getUserId(request);
+  const formData = await request.formData();
+  const actionType = formData.get('actionType') as string;
+
+  if (actionType === 'deleteRecipe') {
+    const recipeId = parseInt(formData.get('recipeId') as string);
+    const result = await deleteSavedRecipe(recipeId, userId);
+    
+    return redirect('/savedRecipes');
+  }
+
+  return null;
 }
 
 export default function SavedRecipesRoute() {
