@@ -24,7 +24,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action(args: Route.ActionArgs) {
   const userId = await getUserId(args.request);
-  return handleUpdateNutrition(args, userId);
+  const formData = await args.request.formData();
+  return handleUpdateNutrition(formData, userId);
 }
 export default function NutritionRoute({ loaderData }: Route.ComponentProps) {
   return <Nutrition nutritionProfile={loaderData.nutritionProfile || null} />;

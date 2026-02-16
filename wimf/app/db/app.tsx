@@ -42,6 +42,7 @@ export function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS NutritionProfile (
       nutrition_id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
+      profileName TEXT,
       caloriesLow INTEGER,
       caloriesHigh INTEGER,
       protein INTEGER,
@@ -49,6 +50,8 @@ export function initializeDatabase() {
       fat INTEGER,
       allergy STRING,
       preference STRING,
+      isActive INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES Users(user_id)
     );
 

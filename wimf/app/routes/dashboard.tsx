@@ -2,6 +2,8 @@ import type { Route } from "./+types/dashboard";
 import { Dashboard } from "../pages/dashboard/dashboard";
 import { requireUserId, getUserId } from "~/session.server";
 import { db } from "~/db/app.server";
+import { switchProfile } from "../middleware/NutritionService/nutritionController";
+import { redirect } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -19,14 +21,28 @@ export async function loader({ request }: Route.LoaderArgs) {
     "SELECT * FROM RecipeSave WHERE user_id = ? ORDER BY recipe_id DESC LIMIT 5"
   ).all(userId);
   
-  // Fetch nutrition profile for the user
+  // Fetch active nutrition profile
   const nutritionProfile = db.prepare(
-    "SELECT * FROM NutritionProfile WHERE user_id = ? ORDER BY nutrition_id DESC LIMIT 1"
+    "SELECT * FROM NutritionProfile WHERE user_id = ? AND isActive = 1"
   ).get(userId);
   
-  return { user, savedRecipes, nutritionProfile };
+  // Fetch all profiles
+  const allProfiles = db.prepare(
+    "SELECT nutrition_id, profileName FROM NutritionProfile WHERE user_id = ?"
+  ).all(userId);
+  
+  return { user, savedRecipes, nutritionProfile, allProfiles };
+}
+
+export async function action(args: Route.ActionArgs) {
+  const userId = await getUserId(args.request);
+  const formData = await args.request.formData();
+  const profileId = parseInt(formData.get("profileId") as string);
+  
+  await switchProfile(userId, profileId);
+  return redirect("/dashboard");
 }
 
 export default function DashboardRoute({ loaderData }: Route.ComponentProps) {
-  return <Dashboard user={loaderData.user?.firstName || "User"} savedRecipes={loaderData.savedRecipes || []} nutritionProfile={loaderData.nutritionProfile || null} />;
+  return <Dashboard user={loaderData.user?.firstName || "User"} savedRecipes={loaderData.savedRecipes || []} nutritionProfile={loaderData.nutritionProfile || null} allProfiles={loaderData.allProfiles || []} />;
 }
