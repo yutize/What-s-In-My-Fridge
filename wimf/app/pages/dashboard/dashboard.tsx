@@ -2,8 +2,10 @@ import { Form } from "react-router";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 import { Navbar } from "~/components/navbar/navbar";
+import type { SavedRecipe } from "~/types/recipe";
+import type { NutritionProfile } from "~/types/nutrition";
 
-export function Dashboard( { user }: { user: any }) {
+export function Dashboard( { user, savedRecipes, nutritionProfile }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null }) {
   return (
     <>
    <Navbar />
@@ -88,53 +90,41 @@ export function Dashboard( { user }: { user: any }) {
           </div>
         </div>
 
-        {/* This Week's Meals */}
+        {/* Saved Meals */}
         <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom flex flex-col h-[300px]">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">This Week's Meals</h2>
-            <a href="#" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>View All</a>
+            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">Saved Meals</h2>
+            <a href="/savedRecipes" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>View All</a>
           </div>
           <div className="flex-1 overflow-y-auto space-y-4 pr-2" style={{scrollbarWidth: 'thin', scrollbarColor: 'rgba(38, 155, 89, 0.5) transparent'}}>
-            <div className="flex items-center gap-4 h-[55px] rounded-lg p-5" style={{backgroundColor: 'rgba(20, 184, 166, 0.2)'}}>
-              <span className="bg-teal-500 text-white px-3 py-1 rounded text-sm font-medium w-[55px] flex items-center justify-center flex-shrink-0">Mon</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-gray-700 dark:text-gray-700 line-clamp-1">Marry Me Chicken</p>
-                <p className="text-xs text-gray-500">Dinner • 450 kcal</p>
+            {savedRecipes.length > 0 ? (
+              savedRecipes.map((recipe, index) => {
+                const colors = [
+                  { bg: 'rgba(20, 184, 166, 0.2)', badge: 'bg-teal-500' },
+                  { bg: 'rgba(234, 179, 8, 0.2)', badge: 'bg-yellow-500' },
+                  { bg: 'rgba(59, 130, 246, 0.2)', badge: 'bg-blue-500' },
+                  { bg: 'rgba(147, 51, 234, 0.2)', badge: 'bg-purple-500' },
+                  { bg: 'rgba(236, 72, 153, 0.2)', badge: 'bg-pink-500' },
+                ];
+                const colorScheme = colors[index % colors.length];
+                
+                return (
+                  <div key={recipe.recipe_id} className="flex items-center gap-4 h-[55px] rounded-lg p-5" style={{backgroundColor: colorScheme.bg}}>
+                    <span className={`${colorScheme.badge} text-white px-3 py-1 rounded text-sm font-medium w-[55px] flex items-center justify-center flex-shrink-0`}>#{index + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-700 dark:text-gray-700 line-clamp-1">{recipe.recipe_name}</p>
+                      <p className="text-xs text-gray-500">{recipe.servings} servings</p>
+                    </div>
+                    <img src={recipe.recipe_image} alt={recipe.recipe_name} className="w-[45px] h-[45px] object-cover rounded flex-shrink-0" />
+                  </div>
+                );
+              })
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
+                <p className="mb-2">No saved recipes yet</p>
+                <a href="/recipes" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>Browse Recipes</a>
               </div>
-              <img src="/recipes/marrymechicken.jpg" alt="Marry Me Chicken" className="w-[45px] h-[45px] object-cover rounded flex-shrink-0" />
-            </div>
-            <div className="flex items-center gap-4 h-[55px] rounded-lg p-5" style={{backgroundColor: 'rgba(234, 179, 8, 0.2)'}}>
-              <span className="bg-yellow-500 text-white px-3 py-1 rounded text-sm font-medium w-[55px] flex items-center justify-center flex-shrink-0">Tue</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-gray-700 dark:text-gray-700 line-clamp-1">Creamy Pasta Carbonara</p>
-                <p className="text-xs text-gray-500">Dinner • 520 kcal</p>
-              </div>
-              <img src="/recipes/creamypastacarbanara.jpg" alt="Creamy Pasta Carbonara" className="w-[45px] h-[45px] object-cover rounded flex-shrink-0" />
-            </div>
-            <div className="flex items-center gap-4 h-[55px] rounded-lg p-5" style={{backgroundColor: 'rgba(59, 130, 246, 0.2)'}}>
-              <span className="bg-blue-500 text-white px-3 py-1 rounded text-sm font-medium w-[55px] flex items-center justify-center flex-shrink-0">Wed</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-gray-700 dark:text-gray-700 line-clamp-1">Rainbow Salad</p>
-                <p className="text-xs text-gray-500">Lunch • 150 kcal</p>
-              </div>
-              <img src="/recipes/rainbowsalad.jpeg" alt="Rainbow Salad" className="w-[45px] h-[45px] object-cover rounded flex-shrink-0" />
-            </div>
-            <div className="flex items-center gap-4 h-[55px] rounded-lg p-5" style={{backgroundColor: 'rgba(147, 51, 234, 0.2)'}}>
-              <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-medium w-[55px] flex items-center justify-center flex-shrink-0">Thu</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-gray-700 dark:text-gray-700 line-clamp-1">Lemon Butter Garlic Salmon</p>
-                <p className="text-xs text-gray-500">Dinner • 460 kcal</p>
-              </div>
-              <img src="/recipes/lemonbuttergarlicsalmon.jpg" alt="Lemon Butter Garlic Salmon" className="w-[45px] h-[45px] object-cover rounded flex-shrink-0" />
-            </div>
-            <div className="flex items-center gap-4 h-[55px] rounded-lg p-5" style={{backgroundColor: 'rgba(236, 72, 153, 0.2)'}}>
-              <span className="bg-pink-500 text-white px-3 py-1 rounded text-sm font-medium w-[55px] flex items-center justify-center flex-shrink-0">Fri</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-gray-700 dark:text-gray-700 line-clamp-1">Creamy Tuscan Pasta</p>
-                <p className="text-xs text-gray-500">Dinner • 480 kcal</p>
-              </div>
-              <img src="/recipes/tuscanchickenpasta.jpg" alt="Creamy Tuscan Pasta" className="w-[45px] h-[45px] object-cover rounded flex-shrink-0" />
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -171,51 +161,114 @@ export function Dashboard( { user }: { user: any }) {
         </div>
       </div>
 
-      {/* Today's Nutrition & Quick Actions Row */}
-      <div className="w-full grid grid-cols-2 gap-6">
-        {/* Today's Nutrition */}
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom h-[300px]">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">Today's Nutrition</h2>
-            <a href="#" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>View Details</a>
-          </div>
-          <div className="space-y-5">
-            <div className="flex items-center gap-3">
-              <div className="flex-1 bg-red-500 h-2 rounded"></div>
-              <span className="text-sm text-gray-700 dark:text-gray-700">Calories</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex-1 bg-purple-500 h-2 rounded"></div>
-              <span className="text-sm text-gray-700 dark:text-gray-700">Protein</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex-1 bg-yellow-500 h-2 rounded"></div>
-              <span className="text-sm text-gray-700 dark:text-gray-700">Carbs</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex-1 bg-green-500 h-2 rounded"></div>
-              <span className="text-sm text-gray-700 dark:text-gray-700">Fat</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom h-[300px] flex flex-col">
-          <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-2 flex-1 auto-rows-fr">
-            <a href="/nutrition" className="rounded-lg flex items-center justify-center hover:opacity-90 transition" style={{backgroundColor: '#269b59'}}>
-              <span className="text-white font-medium text-center px-4">Daily Nutrition</span>
-            </a>
-            <a href="/nutrition" className="rounded-lg flex items-center justify-center hover:opacity-90 transition" style={{backgroundColor: '#269b59'}}>
-              <span className="text-white font-medium text-center px-4">Allergies & Tolerances</span>
-            </a>
-            <a href="/recipes" className="rounded-lg flex items-center justify-center hover:opacity-90 transition" style={{backgroundColor: '#269b59'}}>
-              <span className="text-white font-medium text-center px-4">Recipe Search</span>
-            </a>
-            <a href="/recipes" className="rounded-lg flex items-center justify-center hover:opacity-90 transition" style={{backgroundColor: '#269b59'}}>
-              <span className="text-white font-medium text-center px-4">Recipe Results</span>
+      {/* Nutrition Profile Overview */}
+      <div className="w-full">
+        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">Nutrition Profile</h2>
+            <a href="/nutrition" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>
+              {nutritionProfile ? 'Edit Profile' : 'Set Up Profile'}
             </a>
           </div>
+          
+          {nutritionProfile ? (
+            <div className="grid grid-cols-2 gap-6">
+              {/* Daily Goals Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">Daily Meal Goals</h3>
+                <div className="space-y-3">
+                  {nutritionProfile.caloriesLow && nutritionProfile.caloriesHigh && (
+                    <div className="flex items-center justify-between p-3 rounded-lg" style={{backgroundColor: 'rgba(239, 68, 68, 0.1)'}}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <span className="text-sm font-medium text-gray-700">Calories</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-700">{nutritionProfile.caloriesLow} - {nutritionProfile.caloriesHigh} kcal</span>
+                    </div>
+                  )}
+                  {nutritionProfile.protein && (
+                    <div className="flex items-center justify-between p-3 rounded-lg" style={{backgroundColor: 'rgba(147, 51, 234, 0.1)'}}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                        <span className="text-sm font-medium text-gray-700">Protein</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-700">{nutritionProfile.protein}g</span>
+                    </div>
+                  )}
+                  {nutritionProfile.carbs && (
+                    <div className="flex items-center justify-between p-3 rounded-lg" style={{backgroundColor: 'rgba(234, 179, 8, 0.1)'}}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <span className="text-sm font-medium text-gray-700">Carbs</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-700">{nutritionProfile.carbs}g</span>
+                    </div>
+                  )}
+                  {nutritionProfile.fat && (
+                    <div className="flex items-center justify-between p-3 rounded-lg" style={{backgroundColor: 'rgba(34, 197, 94, 0.1)'}}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span className="text-sm font-medium text-gray-700">Fat</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-700">{nutritionProfile.fat}g</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Dietary Preferences Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">Dietary Preferences</h3>
+                <div className="space-y-4">
+                  {/* Allergies */}
+                  {nutritionProfile.allergy && JSON.parse(nutritionProfile.allergy).length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium text-gray-600 mb-2">Allergies & Intolerances</p>
+                      <div className="flex flex-wrap gap-2">
+                        {JSON.parse(nutritionProfile.allergy).map((allergy: string, index: number) => (
+                          <span key={index} className="px-3 py-1 text-xs font-medium text-red-700 bg-red-100 rounded-full">
+                            {allergy}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Diet Preferences */}
+                  {nutritionProfile.preference && JSON.parse(nutritionProfile.preference).length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium text-gray-600 mb-2">Diet Preferences</p>
+                      <div className="flex flex-wrap gap-2">
+                        {JSON.parse(nutritionProfile.preference).map((pref: string, index: number) => (
+                          <span key={index} className="px-3 py-1 text-xs font-medium text-white rounded-full" style={{backgroundColor: '#269b59'}}>
+                            {pref}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {(!nutritionProfile.allergy || JSON.parse(nutritionProfile.allergy).length === 0) && 
+                   (!nutritionProfile.preference || JSON.parse(nutritionProfile.preference).length === 0) && (
+                    <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                      No dietary restrictions set
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <p className="text-gray-600 mb-4">You haven't set up your nutrition profile yet</p>
+              <a 
+                href="/nutrition" 
+                className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition font-medium"
+                style={{backgroundColor: '#269b59'}}
+              >
+                Set Up Nutrition Profile
+              </a>
+            </div>
+          )}
         </div>
       </div>
    </main>

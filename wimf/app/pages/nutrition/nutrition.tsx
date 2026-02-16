@@ -5,14 +5,19 @@ import { Navbar } from "~/components/navbar/navbar";
 import { NutritionInput } from "~/components/nutrition/NutritionInput";
 import { CheckboxOption } from "~/components/nutrition/CheckboxOption";
 import { SectionCard } from "~/components/nutrition/SectionCard";
+import type { NutritionProfile } from "~/types/nutrition";
 
 interface ActionData {
   success?: boolean;
   message?: string;
 }
 
-export function Nutrition() {
+export function Nutrition({ nutritionProfile }: { nutritionProfile: NutritionProfile | null }) {
   const actionData = useActionData<ActionData>();
+  
+  // Parse allergies and preferences if they exist
+  const allergies = nutritionProfile?.allergy ? JSON.parse(nutritionProfile.allergy) : [];
+  const preferences = nutritionProfile?.preference ? JSON.parse(nutritionProfile.preference) : [];
   return (
     <>
       <Navbar />
@@ -39,6 +44,7 @@ export function Nutrition() {
                 name="caloriesLow"
                 placeholder="Minimum amount of calories."
                 unit="kcal"
+                defaultValue={nutritionProfile?.caloriesLow?.toString()}
               />
               <NutritionInput
                 label="Desired Calories Maximum"
@@ -46,6 +52,7 @@ export function Nutrition() {
                 name="caloriesHigh"
                 placeholder="Maximum amount of calories."
                 unit="kcal"
+                defaultValue={nutritionProfile?.caloriesHigh?.toString()}
               />
               <NutritionInput
                 label="Protein"
@@ -53,6 +60,7 @@ export function Nutrition() {
                 name="protein"
                 placeholder="35"
                 unit="g"
+                defaultValue={nutritionProfile?.protein?.toString()}
               />
               <NutritionInput
                 label="Carbohydrates"
@@ -60,6 +68,7 @@ export function Nutrition() {
                 name="carbs"
                 placeholder="40"
                 unit="g"
+                defaultValue={nutritionProfile?.carbs?.toString()}
               />
               <NutritionInput
                 label="Fat"
@@ -67,6 +76,7 @@ export function Nutrition() {
                 name="fat"
                 placeholder="10"
                 unit="g"
+                defaultValue={nutritionProfile?.fat?.toString()}
               />
             </div>
           </SectionCard>
@@ -74,30 +84,30 @@ export function Nutrition() {
           {/* Allergies & Intolerances */}
           <SectionCard title="Allergies & Intolerances" subtitle="Tell us about any of your allergies or food intolerances.">
             <div className="grid grid-cols-3 gap-4">
-              <CheckboxOption name="allergies" value="nuts" label="Nuts" />
-              <CheckboxOption name="allergies" value="dairy" label="Dairy" />
-              <CheckboxOption name="allergies" value="eggs" label="Eggs" />
-              <CheckboxOption name="allergies" value="shellfish" label="Shellfish" />
-              <CheckboxOption name="allergies" value="fish" label="Fish" />
-              <CheckboxOption name="allergies" value="soy" label="Soy" />
-              <CheckboxOption name="allergies" value="gluten" label="Gluten" />
-              <CheckboxOption name="allergies" value="sesame" label="Sesame" />
-              <CheckboxOption name="allergies" value="peanuts" label="Peanuts" />
+              <CheckboxOption name="allergies" value="nuts" label="Nuts" defaultChecked={allergies.includes("nuts")} />
+              <CheckboxOption name="allergies" value="dairy" label="Dairy" defaultChecked={allergies.includes("dairy")} />
+              <CheckboxOption name="allergies" value="eggs" label="Eggs" defaultChecked={allergies.includes("eggs")} />
+              <CheckboxOption name="allergies" value="shellfish" label="Shellfish" defaultChecked={allergies.includes("shellfish")} />
+              <CheckboxOption name="allergies" value="fish" label="Fish" defaultChecked={allergies.includes("fish")} />
+              <CheckboxOption name="allergies" value="soy" label="Soy" defaultChecked={allergies.includes("soy")} />
+              <CheckboxOption name="allergies" value="gluten" label="Gluten" defaultChecked={allergies.includes("gluten")} />
+              <CheckboxOption name="allergies" value="sesame" label="Sesame" defaultChecked={allergies.includes("sesame")} />
+              <CheckboxOption name="allergies" value="peanuts" label="Peanuts" defaultChecked={allergies.includes("peanuts")} />
             </div>
           </SectionCard>
 
           {/* Dietary Preferences */}
           <SectionCard title="Dietary Preferences" subtitle="Select any dietary preferences you follow.">
             <div className="grid grid-cols-3 gap-4">
-              <CheckboxOption name="diet" value="vegetarian" label="Vegetarian" />
-              <CheckboxOption name="diet" value="vegan" label="Vegan" />
-              <CheckboxOption name="diet" value="pescatarian" label="Pescatarian" />
-              <CheckboxOption name="diet" value="keto" label="Keto" />
-              <CheckboxOption name="diet" value="paleo" label="Paleo" />
-              <CheckboxOption name="diet" value="Mediterranean" label="Halal" />
-              <CheckboxOption name="diet" value="kosher" label="Kosher" />
-              <CheckboxOption name="diet" value="pork-free" label="No Pork" />
-              <CheckboxOption name="diet" value="red-meat-free" label="No Red Meat" />
+              <CheckboxOption name="diet" value="vegetarian" label="Vegetarian" defaultChecked={preferences.includes("vegetarian")} />
+              <CheckboxOption name="diet" value="vegan" label="Vegan" defaultChecked={preferences.includes("vegan")} />
+              <CheckboxOption name="diet" value="pescatarian" label="Pescatarian" defaultChecked={preferences.includes("pescatarian")} />
+              <CheckboxOption name="diet" value="keto" label="Keto" defaultChecked={preferences.includes("keto")} />
+              <CheckboxOption name="diet" value="paleo" label="Paleo" defaultChecked={preferences.includes("paleo")} />
+              <CheckboxOption name="diet" value="Mediterranean" label="Halal" defaultChecked={preferences.includes("Mediterranean")} />
+              <CheckboxOption name="diet" value="kosher" label="Kosher" defaultChecked={preferences.includes("kosher")} />
+              <CheckboxOption name="diet" value="pork-free" label="No Pork" defaultChecked={preferences.includes("pork-free")} />
+              <CheckboxOption name="diet" value="red-meat-free" label="No Red Meat" defaultChecked={preferences.includes("red-meat-free")} />
             </div>
           </SectionCard>
 
