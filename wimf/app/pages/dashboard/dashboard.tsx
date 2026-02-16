@@ -5,7 +5,12 @@ import { Navbar } from "~/components/navbar/navbar";
 import type { SavedRecipe } from "~/types/recipe";
 import type { NutritionProfile } from "~/types/nutrition";
 
-export function Dashboard( { user, savedRecipes, nutritionProfile }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null }) {
+interface ProfileOption {
+  nutrition_id: number;
+  profileName: string | null;
+}
+
+export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null; allProfiles: ProfileOption[] }) {
   return (
     <>
    <Navbar />
@@ -163,11 +168,51 @@ export function Dashboard( { user, savedRecipes, nutritionProfile }: { user: any
 
       {/* Nutrition Profile Overview */}
       <div className="w-full">
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">Nutrition Profile</h2>
-            <a href="/nutrition" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>
-              {nutritionProfile ? 'Edit Profile' : 'Set Up Profile'}
+        <div className="rounded-3xl p-8 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
+          {/* Header with Profile Selector */}
+          <div className="flex justify-between items-start mb-8">
+            <div className="flex-1">
+              <div className="flex items-baseline gap-3 mb-2">
+                <h2 className="text-3xl font-bold text-gray-700 dark:text-gray-700">Nutrition Profile</h2>
+                {allProfiles.length > 1 && nutritionProfile && (
+                  <span className="text-sm text-gray-500">• Switch Profile:</span>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-4 mt-3">
+                {nutritionProfile?.profileName && (
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full" style={{backgroundColor: '#269b59'}}></div>
+                    <p className="text-lg font-semibold" style={{color: '#269b59'}}>{nutritionProfile.profileName}</p>
+                  </div>
+                )}
+                
+                {allProfiles.length > 1 && nutritionProfile && (
+                  <Form method="post" className="flex-1 max-w-xs" preventScrollReset>
+                    <select 
+                      name="profileId" 
+                      onChange={(e) => e.currentTarget.form?.requestSubmit()}
+                      value={nutritionProfile.nutrition_id}
+                      className="w-full px-4 py-2.5 text-sm font-medium border-2 rounded-xl bg-white focus:ring-2 focus:outline-none transition-all shadow-sm hover:shadow-md"
+                      style={{borderColor: '#269b59', color: '#269b59'}}
+                    >
+                      {allProfiles.map((profile) => (
+                        <option key={profile.nutrition_id} value={profile.nutrition_id}>
+                          {profile.profileName || `Profile ${profile.nutrition_id}`}
+                        </option>
+                      ))}
+                    </select>
+                  </Form>
+                )}
+              </div>
+            </div>
+            
+            <a 
+              href="/nutrition" 
+              className="px-5 py-2.5 text-sm font-semibold text-white rounded-xl hover:opacity-90 transition-all shadow-md hover:shadow-lg"
+              style={{backgroundColor: '#269b59'}}
+            >
+              {nutritionProfile ? 'Edit Nutritional Profile' : '+ Set Up Profile'}
             </a>
           </div>
           

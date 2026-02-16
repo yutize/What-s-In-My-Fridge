@@ -16,8 +16,25 @@ export function Nutrition({ nutritionProfile }: { nutritionProfile: NutritionPro
   const actionData = useActionData<ActionData>();
   
   // Parse allergies and preferences if they exist
-  const allergies = nutritionProfile?.allergy ? JSON.parse(nutritionProfile.allergy) : [];
-  const preferences = nutritionProfile?.preference ? JSON.parse(nutritionProfile.preference) : [];
+  let allergies: string[] = [];
+  let preferences: string[] = [];
+  
+  try {
+    if (nutritionProfile?.allergy && nutritionProfile.allergy !== 'null') {
+      allergies = JSON.parse(nutritionProfile.allergy);
+    }
+  } catch (e) {
+    console.error('Error parsing allergies:', e);
+  }
+  
+  try {
+    if (nutritionProfile?.preference && nutritionProfile.preference !== 'null') {
+      preferences = JSON.parse(nutritionProfile.preference);
+    }
+  } catch (e) {
+    console.error('Error parsing preferences:', e);
+  }
+  
   return (
     <>
       <Navbar />
@@ -35,6 +52,30 @@ export function Nutrition({ nutritionProfile }: { nutritionProfile: NutritionPro
 
 
         <Form method="post" className="w-full space-y-6">
+          {/* Hidden fields to track original profile for UPDATE logic */}
+          {nutritionProfile && (
+            <>
+              <input type="hidden" name="originalProfileId" value={nutritionProfile.nutrition_id} />
+              <input type="hidden" name="originalProfileName" value={nutritionProfile.profileName || ''} />
+            </>
+          )}
+          
+          {/* Profile Name */}
+          <SectionCard title="Profile Name" subtitle="Give your nutrition profile a name to easily identify it.">
+            <div className="max-w-md">
+              <input
+                type="text"
+                id="profileName"
+                name="profileName"
+                placeholder="e.g., My Fitness Goals, Weight Loss Plan"
+                defaultValue={nutritionProfile?.profileName || ''}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
+              />
+              <p className="text-xs text-gray-500 mt-2">💡 Tip: Change the name to create a new profile, keep it the same to update this one</p>
+            </div>
+          </SectionCard>
+
           {/* Daily Nutritional Goals */}
           <SectionCard title="Daily Meal Nutritional Goals" subtitle="Set your desired daily nutritional goal for each a meal.">
             <div className="grid grid-cols-2 gap-6">
