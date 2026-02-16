@@ -1,16 +1,7 @@
 import { useLoaderData, Form } from "react-router";
 import { Navbar } from "~/components/navbar/navbar";
 import { useState } from "react";
-
-interface SavedRecipe {
-  recipe_id: number;
-  user_id: number;
-  recipe_name: string;
-  recipe_url: string;
-  recipe_image: string;
-  servings: number;
-  ingredients: string;
-}
+import type { SavedRecipe } from "~/types/recipe";
 
 export function SavedRecipes() {
   const { savedRecipes } = useLoaderData<{ savedRecipes: SavedRecipe[] }>();
