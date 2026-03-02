@@ -5,8 +5,10 @@ export interface ProfileOption {
 
 export interface InventoryItem {
   inventory_id: number;
+  ingredient_id: number;
   quantity: number;
   expiration_date: string | null;
   ingredient_name: string;
+  category: string | null;
   unit: string | null;
 }

@@ -3,6 +3,7 @@ import { Ingredients } from "~/pages/ingredients/ingredients";
 import { requireUserId, getUserId } from "~/session.server";
 import { db } from "~/db/app.server";
 import { redirect } from "react-router";
+import type { InventoryItem } from "~/types/dashboard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -15,7 +16,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   await requireUserId(request);
   const userId = await getUserId(request);
   
-  // Fetch user's inventory with ingredient details
   const inventoryItems = db.prepare(`
     SELECT 
       inv.inventory_id,
@@ -62,8 +62,7 @@ export async function action({ request }: Route.ActionArgs) {
     } else {
       ingredientId = ingredient.ingredient_id;
     }
-    
-    // Add to inventory
+
     db.prepare(
       "INSERT INTO Inventory (user_id, ingredient_id, quantity, expiration_date) VALUES (?, ?, ?, ?)"
     ).run(userId, ingredientId, quantity, expirationDate);
@@ -86,5 +85,5 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function IngredientsRoute({ loaderData }: Route.ComponentProps) {
-  return <Ingredients inventoryItems={loaderData.inventoryItems || []} />;
+  return <Ingredients inventoryItems={(loaderData.inventoryItems || []) as unknown as InventoryItem[]} />;
 }

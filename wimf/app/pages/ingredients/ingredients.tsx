@@ -1,16 +1,7 @@
 import { Navbar } from "~/components/navbar/navbar";
 import { Form } from "react-router";
 import { useState } from "react";
-
-interface InventoryItem {
-  inventory_id: number;
-  ingredient_id: number;
-  ingredient_name: string;
-  category: string | null;
-  quantity: number;
-  unit: string | null;
-  expiration_date: string | null;
-}
+import type { InventoryItem } from "~/types/dashboard";
 
 interface IngredientsProps {
   inventoryItems: InventoryItem[];
@@ -42,7 +33,7 @@ export function Ingredients({ inventoryItems }: IngredientsProps) {
     return matchesSearch && matchesCategory;
   });
 
-  // Group by category
+
   const groupedIngredients = filteredIngredients.reduce((acc, ing) => {
     const cat = ing.category || "Other";
     if (!acc[cat]) {
