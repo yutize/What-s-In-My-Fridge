@@ -4,6 +4,8 @@ import { requireUserId, getUserId } from "~/session.server";
 import { db } from "~/db/app.server";
 import { switchProfile } from "../middleware/NutritionService/nutritionController";
 import { redirect } from "react-router";
+import type { SavedRecipe } from "~/types/recipe";
+import type { ProfileOption, InventoryItem } from "~/types/dashboard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -21,12 +23,10 @@ export async function loader({ request }: Route.LoaderArgs) {
     "SELECT * FROM RecipeSave WHERE user_id = ? ORDER BY recipe_id DESC LIMIT 5"
   ).all(userId);
   
-  // Fetch active nutrition profile
   const nutritionProfile = db.prepare(
     "SELECT * FROM NutritionProfile WHERE user_id = ? AND isActive = 1"
   ).get(userId);
   
-  // Fetch all profiles
   const allProfiles = db.prepare(
     "SELECT nutrition_id, profileName FROM NutritionProfile WHERE user_id = ?"
   ).all(userId);
@@ -36,7 +36,9 @@ export async function loader({ request }: Route.LoaderArgs) {
       inv.inventory_id,
       inv.quantity,
       inv.expiration_date,
+      ing.ingredient_id,
       ing.ingredient_name,
+      ing.category,
       ing.uom as unit
     FROM Inventory inv
     JOIN Ingredients ing ON inv.ingredient_id = ing.ingredient_id
@@ -57,5 +59,11 @@ export async function action(args: Route.ActionArgs) {
 }
 
 export default function DashboardRoute({ loaderData }: Route.ComponentProps) {
-  return <Dashboard user={loaderData.user?.firstName || "User"} savedRecipes={loaderData.savedRecipes || []} nutritionProfile={loaderData.nutritionProfile || null} allProfiles={loaderData.allProfiles || []} inventoryItems={loaderData.inventoryItems || []} />;
+  return <Dashboard 
+    user={loaderData.user?.firstName || "User"} 
+    savedRecipes={(loaderData.savedRecipes || []) as unknown as SavedRecipe[]} 
+    nutritionProfile={loaderData.nutritionProfile || null} 
+    allProfiles={(loaderData.allProfiles || []) as unknown as ProfileOption[]} 
+    inventoryItems={(loaderData.inventoryItems || []) as unknown as InventoryItem[]} 
+  />;
 }

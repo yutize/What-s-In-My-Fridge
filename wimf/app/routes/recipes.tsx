@@ -4,6 +4,10 @@ import { requireUserId, getUserId } from "~/session.server";
 import { handleRecipeSearch } from "~/middleware/RecipeService/handleRecipeSearch";
 import { db } from "~/db/app.server";
 
+interface InventoryItem {
+  ingredient_name: string;
+}
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Recipes" },
@@ -13,7 +17,20 @@ export function meta({}: Route.MetaArgs) {
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireUserId(request);
-
+  const userId = await getUserId(request);
+  
+  const inventoryItems = db.prepare(`
+    SELECT 
+      ing.ingredient_name
+    FROM Inventory inv
+    JOIN Ingredients ing ON inv.ingredient_id = ing.ingredient_id
+    WHERE inv.user_id = ? 
+      AND (inv.expiration_date IS NULL OR DATE(inv.expiration_date) >= DATE('now'))
+    GROUP BY ing.ingredient_name
+    ORDER BY ing.ingredient_name
+  `).all(userId);
+  
+  return { inventoryItems };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -42,8 +59,10 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   const ingredients = formData.getAll('ingredient') as string[];
+  console.log('Received ingredients from form:', ingredients);
+  
   const nutritionProfile = db.prepare(
-    "SELECT * FROM NutritionProfile WHERE user_id = ? ORDER BY nutrition_id DESC LIMIT 1"
+    "SELECT * FROM NutritionProfile WHERE user_id = ? AND isActive = 1"
   ).get(userId) as { 
     caloriesLow: number; 
     caloriesHigh: number; 
@@ -70,11 +89,11 @@ export async function action({ request }: Route.ActionArgs) {
     }
 
     if (nutritionProfile.fat) {
-      fatRange = `${nutritionProfile.fat}`;
+      fatRange = `0-${nutritionProfile.fat}`;
     }
 
     if (nutritionProfile.carbs) {
-      carbsRange = `${nutritionProfile.carbs}`;
+      carbsRange = `0-${nutritionProfile.carbs}`;
     }
 
     if (nutritionProfile.allergy) {
@@ -107,6 +126,6 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 
-export default function RecipesRoute() {
-  return <Recipes />;
+export default function RecipesRoute({ loaderData }: Route.ComponentProps) {
+  return <Recipes inventoryItems={(loaderData?.inventoryItems ?? []) as unknown as InventoryItem[]} />;
 }

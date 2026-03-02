@@ -13,7 +13,6 @@ export async function handleUpdateNutrition(formData: FormData, userId: number) 
   const allergies = formData.getAll("allergies");
   const diet = formData.getAll("diet");
   
-  // Get original profile info to determine UPDATE vs INSERT
   const originalProfileId = formData.get("originalProfileId");
   const originalProfileName = formData.get("originalProfileName");
 
@@ -31,7 +30,6 @@ export async function handleUpdateNutrition(formData: FormData, userId: number) 
     diet
   });
 
-  // If we have an original profile and the name hasn't changed, UPDATE
   if (originalProfileId && profileName === originalProfileName) {
     db.prepare(`
       UPDATE NutritionProfile 
@@ -41,11 +39,8 @@ export async function handleUpdateNutrition(formData: FormData, userId: number) 
     
     return { success: true, message: 'Nutrition profile updated successfully!' };
   } else {
-    // Name changed or new profile - INSERT as new profile
-    // Deactivate all profiles for this user
     db.prepare(`UPDATE NutritionProfile SET isActive = 0 WHERE user_id = ?`).run(id);
     
-    // Insert new profile as active
     db.prepare(`
       INSERT INTO NutritionProfile (user_id, profileName, caloriesLow, caloriesHigh, protein, carbs, fat, allergy, preference, isActive)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
@@ -56,9 +51,7 @@ export async function handleUpdateNutrition(formData: FormData, userId: number) 
 }
 
 export async function switchProfile(userId: number, profileId: number) {
-  // Deactivate all profiles
   db.prepare(`UPDATE NutritionProfile SET isActive = 0 WHERE user_id = ?`).run(userId);
-  // Activate selected profile
   db.prepare(`UPDATE NutritionProfile SET isActive = 1 WHERE nutrition_id = ? AND user_id = ?`).run(profileId, userId);
   return { success: true };
 }

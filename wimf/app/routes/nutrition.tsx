@@ -14,7 +14,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   await requireUserId(request);
   const userId = await getUserId(request);
   
-  // Fetch existing nutrition profile for the user
+
   const nutritionProfile = db.prepare(
     "SELECT * FROM NutritionProfile WHERE user_id = ? ORDER BY nutrition_id DESC LIMIT 1"
   ).get(userId);
