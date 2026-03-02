@@ -6,7 +6,11 @@ import type { SavedRecipe } from "~/types/recipe";
 import type { NutritionProfile } from "~/types/nutrition";
 import type { ProfileOption, InventoryItem } from "~/types/dashboard";
 
-export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null; allProfiles: ProfileOption[]; inventoryItems: InventoryItem[] }) {
+interface ExpiringItem extends InventoryItem {
+  days_until_expiration: number;
+}
+
+export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems, expiringSoonItems }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null; allProfiles: ProfileOption[]; inventoryItems: InventoryItem[]; expiringSoonItems: ExpiringItem[] }) {
   return (
     <>
    <Navbar />
@@ -101,6 +105,55 @@ export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles, 
           </div>
         </div>
       </div>
+
+      {expiringSoonItems.length > 0 && (
+        <div className="w-full">
+          <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">⚠️ Ingredients to Expire Soon</h2>
+                <span className="px-3 py-1 bg-orange-100 text-orange-700 text-sm font-semibold rounded-full">
+                  {expiringSoonItems.length} item{expiringSoonItems.length > 1 ? 's' : ''}
+                </span>
+              </div>
+              <a href="/ingredients" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>Manage All</a>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {expiringSoonItems.map((item) => {
+                const daysLeft = item.days_until_expiration;
+                const isUrgent = daysLeft <= 2;
+                const bgColor = isUrgent ? 'rgba(239, 68, 68, 0.1)' : 'rgba(251, 146, 60, 0.1)';
+                const borderColor = isUrgent ? '#ef4444' : '#fb923c';
+                
+                return (
+                  <div 
+                    key={item.inventory_id} 
+                    className="rounded-lg p-4 border-2 transition hover:shadow-md"
+                    style={{backgroundColor: bgColor, borderColor: borderColor}}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-semibold text-gray-700 text-sm flex-1">{item.ingredient_name}</h3>
+                      <span className={`px-2 py-1 text-xs font-bold rounded ${isUrgent ? 'bg-red-500 text-white' : 'bg-orange-500 text-white'}`}>
+                        {daysLeft === 0 ? 'Today!' : daysLeft === 1 ? '1 day' : `${daysLeft} days`}
+                      </span>
+                    </div>
+                    <div className="space-y-1 text-xs text-gray-600">
+                      <p>Quantity: {item.quantity} {item.unit || 'unit(s)'}</p>
+                      <p>Category: {item.category || 'Other'}</p>
+                      <p className="font-medium">Expires: {new Date(item.expiration_date!).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-700">
+                Use these ingredients soon to avoid waste! Try searching for recipes with them in the Recipe Search page.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recommended for You */}
       <div className="w-full">

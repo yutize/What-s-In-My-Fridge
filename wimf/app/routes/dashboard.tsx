@@ -46,7 +46,30 @@ export async function loader({ request }: Route.LoaderArgs) {
       AND (inv.expiration_date IS NULL OR DATE(inv.expiration_date) >= DATE('now'))
   `).all(userId);
   
-  return { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems };
+  const today = new Date();
+  const sevenDaysFromNow = new Date(today);
+  sevenDaysFromNow.setDate(today.getDate() + 7);
+  
+  const expiringSoonItems = db.prepare(`
+    SELECT 
+      inv.inventory_id,
+      inv.quantity,
+      inv.expiration_date,
+      ing.ingredient_id,
+      ing.ingredient_name,
+      ing.category,
+      ing.uom as unit,
+      CAST((JULIANDAY(DATE(inv.expiration_date)) - JULIANDAY(DATE('now'))) AS INTEGER) as days_until_expiration
+    FROM Inventory inv
+    JOIN Ingredients ing ON inv.ingredient_id = ing.ingredient_id
+    WHERE inv.user_id = ? 
+      AND inv.expiration_date IS NOT NULL
+      AND DATE(inv.expiration_date) >= DATE('now')
+      AND DATE(inv.expiration_date) <= DATE('now', '+7 days')
+    ORDER BY inv.expiration_date ASC
+  `).all(userId);
+  
+  return { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems, expiringSoonItems };
 }
 
 export async function action(args: Route.ActionArgs) {
@@ -65,5 +88,6 @@ export default function DashboardRoute({ loaderData }: Route.ComponentProps) {
     nutritionProfile={loaderData.nutritionProfile || null} 
     allProfiles={(loaderData.allProfiles || []) as unknown as ProfileOption[]} 
     inventoryItems={(loaderData.inventoryItems || []) as unknown as InventoryItem[]} 
+    expiringSoonItems={(loaderData.expiringSoonItems || []) as unknown as InventoryItem[]}
   />;
 }
