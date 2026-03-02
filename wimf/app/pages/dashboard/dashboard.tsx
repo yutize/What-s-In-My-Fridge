@@ -274,13 +274,6 @@ export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles, 
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <p className="text-gray-600 mb-4">You haven't set up your nutrition profile yet</p>
-              <a 
-                href="/nutrition" 
-                className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition font-medium"
-                style={{backgroundColor: '#269b59'}}
-              >
-                Set Up Nutrition Profile
-              </a>
             </div>
           )}
         </div>
