@@ -22,10 +22,11 @@ export function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS Ingredients (
       ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,
       ingredient_name TEXT NOT NULL,
-      unit TEXT,
+      category TEXT,
       calories_per_unit REAL,
       protein_per_unit REAL,
       carbs_per_unit REAL,
+      uom TEXT,
       fat_per_unit REAL
     );
 

@@ -31,7 +31,20 @@ export async function loader({ request }: Route.LoaderArgs) {
     "SELECT nutrition_id, profileName FROM NutritionProfile WHERE user_id = ?"
   ).all(userId);
   
-  return { user, savedRecipes, nutritionProfile, allProfiles };
+  const inventoryItems = db.prepare(`
+    SELECT 
+      inv.inventory_id,
+      inv.quantity,
+      inv.expiration_date,
+      ing.ingredient_name,
+      ing.uom as unit
+    FROM Inventory inv
+    JOIN Ingredients ing ON inv.ingredient_id = ing.ingredient_id
+    WHERE inv.user_id = ? 
+      AND (inv.expiration_date IS NULL OR DATE(inv.expiration_date) >= DATE('now'))
+  `).all(userId);
+  
+  return { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems };
 }
 
 export async function action(args: Route.ActionArgs) {
@@ -44,5 +57,5 @@ export async function action(args: Route.ActionArgs) {
 }
 
 export default function DashboardRoute({ loaderData }: Route.ComponentProps) {
-  return <Dashboard user={loaderData.user?.firstName || "User"} savedRecipes={loaderData.savedRecipes || []} nutritionProfile={loaderData.nutritionProfile || null} allProfiles={loaderData.allProfiles || []} />;
+  return <Dashboard user={loaderData.user?.firstName || "User"} savedRecipes={loaderData.savedRecipes || []} nutritionProfile={loaderData.nutritionProfile || null} allProfiles={loaderData.allProfiles || []} inventoryItems={loaderData.inventoryItems || []} />;
 }
