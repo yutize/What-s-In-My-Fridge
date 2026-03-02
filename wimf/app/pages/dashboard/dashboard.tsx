@@ -96,7 +96,6 @@ export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles, 
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
                 <p className="mb-2">No saved recipes yet</p>
-                <a href="/recipes" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>Browse Recipes</a>
               </div>
             )}
           </div>
