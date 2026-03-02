@@ -1,11 +1,9 @@
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
-import { Navbar } from "~/components/navbar/navbar";
 
 export function About() {
   return (
     <>
-      <Navbar />
       <main className="flex items-center justify-center pt-8 pb-8 px-4">
         <div className="max-w-4xl w-full">
           <div className="flex flex-col items-center gap-8">
