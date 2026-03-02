@@ -44,6 +44,8 @@ export async function action({ request }: Route.ActionArgs) {
     const recipeImage = formData.get('recipeImage') as string;
     const servings = parseInt(formData.get('servings') as string);
     const ingredients = formData.get('ingredients') as string;
+    const currentRecipes = formData.get('currentRecipes') as string;
+    const searchIngredients = formData.get('searchIngredients') as string;
 
     try {
       db.prepare(`
@@ -51,10 +53,22 @@ export async function action({ request }: Route.ActionArgs) {
         VALUES (?, ?, ?, ?, ?, ?)
       `).run(userId, recipeName, recipeUrl, recipeImage, servings, ingredients);
 
-      return { success: true, message: 'Recipe saved successfully!' };
+      return { 
+        success: true, 
+        message: 'Recipe saved successfully!',
+        recipes: currentRecipes ? JSON.parse(currentRecipes) : null,
+        searchIngredients: searchIngredients ? JSON.parse(searchIngredients) : [],
+        timestamp: Date.now()
+      };
     } catch (error) {
       console.error('Error saving recipe:', error);
-      return { success: false, message: 'Failed to save recipe' };
+      return { 
+        success: false, 
+        message: 'Failed to save recipe',
+        recipes: currentRecipes ? JSON.parse(currentRecipes) : null,
+        searchIngredients: searchIngredients ? JSON.parse(searchIngredients) : [],
+        timestamp: Date.now()
+      };
     }
   }
 

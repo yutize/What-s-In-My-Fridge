@@ -20,9 +20,11 @@ interface RecipeCardProps {
       PROCNT: NutrientInfo;
     };
   };
+  currentRecipes?: any;
+  searchIngredients?: string[];
 }
 
-export function RecipeCard({ recipe }: RecipeCardProps) {
+export function RecipeCard({ recipe, currentRecipes, searchIngredients }: RecipeCardProps) {
   const servings = recipe.yield || 1;
   const caloriesPerServing = Math.round(recipe.totalNutrients.ENERC_KCAL.quantity / servings);
   const proteinPerServing = Math.round(recipe.totalNutrients.PROCNT.quantity / servings);
@@ -31,7 +33,6 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
 
   return (
     <div className="rounded-lg overflow-hidden box-shadow-custom hover:shadow-xl transition bg-white/65 dark:bg-white/65">
-      {/* Recipe Image with Save Button */}
       <div className="relative">
         <img
           src={recipe.image}
@@ -45,6 +46,8 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           <input type="hidden" name="recipeImage" value={recipe.image} />
           <input type="hidden" name="servings" value={servings} />
           <input type="hidden" name="ingredients" value={JSON.stringify(recipe.ingredientLines)} />
+          {currentRecipes && <input type="hidden" name="currentRecipes" value={JSON.stringify(currentRecipes)} />}
+          {searchIngredients && <input type="hidden" name="searchIngredients" value={JSON.stringify(searchIngredients)} />}
           <button
             type="submit"
             className="absolute top-2 right-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition shadow-lg"
@@ -55,19 +58,16 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         </Form>
       </div>
 
-      {/* Recipe Info */}
       <div className="p-4">
         <h3 className="font-bold text-lg mb-2 text-gray-700 dark:text-gray-700">
           {recipe.label}
         </h3>
         <p className="text-xs text-gray-500 mb-2">{servings} servings</p>
 
-{/* Warning */}
         <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-700">
           <div>Below are the nutritional information per serving</div>
         </div>
 
-        {/* Nutrition Info - Per Serving */}
         <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-700">
           <div>🔥 {caloriesPerServing} cal</div>
           <div>💪 {proteinPerServing}g protein</div>
@@ -75,7 +75,6 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           <div>🥑 {fatPerServing}g fat</div>
         </div>
 
-        {/* Ingredients Preview */}
         <div className="mb-3">
           <p className="text-xs text-gray-700 dark:text-gray-700 mb-1">
             Ingredients:
@@ -85,7 +84,6 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           </p>
         </div>
 
-        {/* View Recipe Link */}
         <a
           href={recipe.url}
           target="_blank"

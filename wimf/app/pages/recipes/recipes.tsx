@@ -19,11 +19,31 @@ export function Recipes({ inventoryItems }: RecipesProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [showInventoryModal, setShowInventoryModal] = useState(false);
   const [selectedInventoryItems, setSelectedInventoryItems] = useState<Set<string>>(new Set());
-  const actionData = useActionData<{ recipes?: any; error?: string }>();
+  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const actionData = useActionData<{ recipes?: any; error?: string; success?: boolean; message?: string; searchIngredients?: string[]; timestamp?: number }>();
   const navigation = useNavigation();
   const isLoading = navigation.state === "submitting";
 
   const apiRecipes = actionData?.recipes?.hits?.map((hit: any) => hit.recipe) || [];
+
+  useEffect(() => {
+    if (actionData?.searchIngredients && actionData.searchIngredients.length > 0) {
+      setIngredients(actionData.searchIngredients);
+    }
+  }, [actionData?.searchIngredients]);
+
+  useEffect(() => {
+    if (actionData?.message && actionData?.timestamp) {
+      setSaveMessage({
+        type: actionData.success ? 'success' : 'error',
+        text: actionData.message
+      });
+      const timer = setTimeout(() => {
+        setSaveMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [actionData?.timestamp]);
 
   useEffect(() => {
     if (actionData?.recipes) {
@@ -61,8 +81,20 @@ export function Recipes({ inventoryItems }: RecipesProps) {
     <>
       <Navbar />
 
+      {/* Save Message Notification */}
+      {saveMessage && (
+        <div className="fixed top-4 right-4 z-50 animate-fade-in">
+          <div className={`rounded-lg px-6 py-3 shadow-lg ${
+            saveMessage.type === 'success' 
+              ? 'bg-green-500 text-white' 
+              : 'bg-red-500 text-white'
+          }`}>
+            <p className="font-medium">{saveMessage.text}</p>
+          </div>
+        </div>
+      )}
+
       <main className="flex flex-col items-center px-6 py-8 gap-10 max-w-[1400px] mx-auto">
-        {/* Header */}
         <div className="w-full">
           <div className="rounded-3xl p-12 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
             <div className="flex justify-between items-start mb-2">
@@ -88,7 +120,6 @@ export function Recipes({ inventoryItems }: RecipesProps) {
           </div>
         </div>
 
-        {/* Search Section */}
         <div className="w-full">
           <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
             <div className="flex justify-between items-center mb-4">
@@ -107,13 +138,11 @@ export function Recipes({ inventoryItems }: RecipesProps) {
               )}
             </div>
 
-            {/* Ingredient Input Component */}
             <IngredientInput
               ingredients={ingredients}
               onIngredientsChange={setIngredients}
             />
 
-            {/* Search Button */}
             <Form method="post">
               {ingredients.map((ing, i) => (
                 <input key={i} type="hidden" name="ingredient" value={ing} />
@@ -132,10 +161,8 @@ export function Recipes({ inventoryItems }: RecipesProps) {
           </div>
         </div>
 
-        {/* Loading State */}
         {isLoading && <RecipeLoadingGrid />}
 
-        {/* Error Message */}
         {!isLoading && actionData?.error && (
           <div className="w-full">
             <div className="rounded-3xl p-8 bg-red-50 border border-red-200">
@@ -145,7 +172,6 @@ export function Recipes({ inventoryItems }: RecipesProps) {
           </div>
         )}
 
-        {/* Recipe Results */}
         {!isLoading && apiRecipes.length > 0 && (
           <>
             <div className="w-full">
@@ -157,12 +183,16 @@ export function Recipes({ inventoryItems }: RecipesProps) {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {currentRecipes.map((recipe: any, index: number) => (
-                  <RecipeCard key={recipe.url || index} recipe={recipe} />
+                  <RecipeCard 
+                    key={recipe.url || index} 
+                    recipe={recipe}
+                    currentRecipes={actionData?.recipes}
+                    searchIngredients={ingredients}
+                  />
                 ))}
               </div>
             </div>
 
-            {/* Pagination */}
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
@@ -171,7 +201,6 @@ export function Recipes({ inventoryItems }: RecipesProps) {
           </>
         )}
 
-        {/* No Results */}
         {!isLoading && actionData && apiRecipes.length === 0 && (
           <div className="w-full text-center py-12">
             <p className="text-gray-700 dark:text-gray-700 text-lg">
@@ -181,11 +210,9 @@ export function Recipes({ inventoryItems }: RecipesProps) {
         )}
       </main>
 
-      {/* Inventory Modal */}
       {showInventoryModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden shadow-2xl">
-            {/* Modal Header */}
             <div className="p-6 border-b border-gray-200">
               <div className="flex justify-between items-center">
                 <h3 className="text-2xl font-bold text-gray-700">Select Ingredients from My Fridge</h3>
@@ -204,7 +231,6 @@ export function Recipes({ inventoryItems }: RecipesProps) {
               </p>
             </div>
 
-            {/* Modal Body */}
             <div className="p-6 overflow-y-auto max-h-[50vh]">
               {inventoryItems.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3">
@@ -242,7 +268,6 @@ export function Recipes({ inventoryItems }: RecipesProps) {
               )}
             </div>
 
-            {/* Modal Footer */}
             <div className="p-6 border-t border-gray-200 flex justify-between items-center">
               <p className="text-sm text-gray-600">
                 {selectedInventoryItems.size} ingredient{selectedInventoryItems.size !== 1 ? 's' : ''} selected
