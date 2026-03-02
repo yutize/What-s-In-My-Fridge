@@ -1,72 +1,56 @@
 import { Navbar } from "~/components/navbar/navbar";
+import { Form } from "react-router";
 import { useState } from "react";
 
-interface IngredientItem {
-  id: string;
-  name: string;
-  quantity: string;
-  category: string;
-  addedDate: Date;
+interface InventoryItem {
+  inventory_id: number;
+  ingredient_id: number;
+  ingredient_name: string;
+  category: string | null;
+  quantity: number;
+  unit: string | null;
+  expiration_date: string | null;
 }
 
-export function Ingredients() {
-  const [ingredients, setIngredients] = useState<IngredientItem[]>([]);
+interface IngredientsProps {
+  inventoryItems: InventoryItem[];
+}
+
+export function Ingredients({ inventoryItems }: IngredientsProps) {
   const [inputValue, setInputValue] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [unit, setUnit] = useState("unit");
   const [category, setCategory] = useState("Other");
+  const [expirationDate, setExpirationDate] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
 
   const categories = ["All", "Vegetables", "Fruits", "Meat", "Dairy", "Grains", "Spices", "Other"];
 
-  const handleAddIngredient = () => {
-    if (inputValue.trim()) {
-      const newIngredient: IngredientItem = {
-        id: Date.now().toString(),
-        name: inputValue.trim(),
-        quantity: quantity.trim() || "As needed",
-        category: category,
-        addedDate: new Date(),
-      };
-      setIngredients([...ingredients, newIngredient]);
-      setInputValue("");
-      setQuantity("");
-      setCategory("Other");
-    }
-  };
-
-  const handleRemoveIngredient = (id: string) => {
-    setIngredients(ingredients.filter((ing) => ing.id !== id));
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddIngredient();
-    }
-  };
-
-  const handleClearAll = () => {
-    if (window.confirm("Are you sure you want to clear all ingredients?")) {
-      setIngredients([]);
-    }
+  const handleClearForm = () => {
+    setInputValue("");
+    setQuantity("");
+    setUnit("unit");
+    setCategory("Other");
+    setExpirationDate("");
   };
 
   // Filter ingredients
-  const filteredIngredients = ingredients.filter((ing) => {
-    const matchesSearch = ing.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredIngredients = inventoryItems.filter((ing) => {
+    const matchesSearch = ing.ingredient_name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory === "All" || ing.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
 
   // Group by category
   const groupedIngredients = filteredIngredients.reduce((acc, ing) => {
-    if (!acc[ing.category]) {
-      acc[ing.category] = [];
+    const cat = ing.category || "Other";
+    if (!acc[cat]) {
+      acc[cat] = [];
     }
-    acc[ing.category].push(ing);
+    acc[cat].push(ing);
     return acc;
-  }, {} as Record<string, IngredientItem[]>);
+  }, {} as Record<string, InventoryItem[]>);
 
   return (
     <>
@@ -92,47 +76,79 @@ export function Ingredients() {
               Add New Ingredient
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-              <input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Ingredient name (e.g., Chicken breast)"
-                className="md:col-span-5 px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
-              />
-              <input
-                type="text"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Quantity (e.g., 2 lbs)"
-                className="md:col-span-3 px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
-              />
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="md:col-span-3 px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
-              >
-                {categories.filter(cat => cat !== "All").map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={handleAddIngredient}
-                disabled={!inputValue.trim()}
-                className="md:col-span-1 px-6 py-3 text-white rounded-lg hover:opacity-90 transition font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
-                style={{ backgroundColor: inputValue.trim() ? '#269b59' : undefined }}
-              >
-                Add
-              </button>
-            </div>
+            <Form method="post" onSubmit={handleClearForm}>
+              <input type="hidden" name="actionType" value="addIngredient" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+                <input
+                  type="text"
+                  name="ingredientName"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Ingredient name (e.g., Chicken breast)"
+                  required
+                  className="md:col-span-4 px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
+                />
+                <input
+                  type="number"
+                  name="quantity"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  placeholder="Quantity"
+                  step="0.01"
+                  required
+                  className="md:col-span-2 px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
+                />
+                <select
+                  name="unit"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  className="md:col-span-2 px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
+                >
+                  <option value="unit">unit(s)</option>
+                  <option value="lbs">lbs</option>
+                  <option value="oz">oz</option>
+                  <option value="g">g</option>
+                  <option value="kg">kg</option>
+                  <option value="cups">cups</option>
+                  <option value="tbsp">tbsp</option>
+                  <option value="tsp">tsp</option>
+                  <option value="ml">ml</option>
+                  <option value="L">L</option>
+                </select>
+                <select
+                  name="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="md:col-span-2 px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
+                >
+                  {categories.filter(cat => cat !== "All").map((cat) => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+                <input
+                  type="date"
+                  name="expirationDate"
+                  value={expirationDate}
+                  onChange={(e) => setExpirationDate(e.target.value)}
+                  placeholder="Expiration (optional)"
+                  className="md:col-span-2 px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-200 dark:border-gray-300 dark:text-gray-800"
+                />
+                <button
+                  type="submit"
+                  disabled={!inputValue.trim() || !quantity}
+                  className="md:col-span-1 px-6 py-3 text-white rounded-lg hover:opacity-90 transition font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  style={{ backgroundColor: inputValue.trim() && quantity ? '#269b59' : undefined }}
+                >
+                  Add
+                </button>
+              </div>
+            </Form>
           </div>
         </div>
 
         {/* Filter and Search Section */}
-        {ingredients.length > 0 && (
+        {inventoryItems.length > 0 && (
           <div className="w-full">
             <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
               <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -155,12 +171,6 @@ export function Ingredients() {
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
-                  <button
-                    onClick={handleClearAll}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium"
-                  >
-                    Clear All
-                  </button>
                 </div>
               </div>
             </div>
@@ -168,7 +178,7 @@ export function Ingredients() {
         )}
 
         {/* Ingredients List */}
-        {ingredients.length === 0 ? (
+        {inventoryItems.length === 0 ? (
           <div className="w-full">
             <div className="rounded-3xl p-12 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom text-center">
               <div className="text-6xl mb-4">🥗</div>
@@ -208,28 +218,39 @@ export function Ingredients() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                       {items.map((ingredient) => (
                         <div
-                          key={ingredient.id}
+                          key={ingredient.inventory_id}
                           className="bg-white dark:bg-gray-100 rounded-lg p-4 border border-gray-200 hover:shadow-md transition"
                         >
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
                               <h4 className="font-semibold text-gray-800 text-lg">
-                                {ingredient.name}
+                                {ingredient.ingredient_name}
                               </h4>
                               <p className="text-gray-600 text-sm mt-1">
-                                Quantity: {ingredient.quantity}
+                                Quantity: {ingredient.quantity} {ingredient.unit || 'unit(s)'}
                               </p>
-                              <p className="text-gray-500 text-xs mt-1">
-                                Added: {ingredient.addedDate.toLocaleDateString()}
-                              </p>
+                              {ingredient.expiration_date && (
+                                <p className="text-gray-500 text-xs mt-1">
+                                  Expires: {new Date(ingredient.expiration_date).toLocaleDateString()}
+                                </p>
+                              )}
                             </div>
-                            <button
-                              onClick={() => handleRemoveIngredient(ingredient.id)}
-                              className="text-red-500 hover:text-red-700 font-bold text-xl ml-2"
-                              title="Remove ingredient"
-                            >
-                              ×
-                            </button>
+                            <Form method="post">
+                              <input type="hidden" name="actionType" value="deleteIngredient" />
+                              <input type="hidden" name="inventoryId" value={ingredient.inventory_id} />
+                              <button
+                                type="submit"
+                                className="text-red-500 hover:text-red-700 font-bold text-xl ml-2"
+                                title="Remove ingredient"
+                                onClick={(e) => {
+                                  if (!confirm('Remove this ingredient from your inventory?')) {
+                                    e.preventDefault();
+                                  }
+                                }}
+                              >
+                                ×
+                              </button>
+                            </Form>
                           </div>
                         </div>
                       ))}

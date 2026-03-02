@@ -4,13 +4,9 @@ import logoLight from "./logo-light.svg";
 import { Navbar } from "~/components/navbar/navbar";
 import type { SavedRecipe } from "~/types/recipe";
 import type { NutritionProfile } from "~/types/nutrition";
+import type { ProfileOption, InventoryItem } from "~/types/dashboard";
 
-interface ProfileOption {
-  nutrition_id: number;
-  profileName: string | null;
-}
-
-export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null; allProfiles: ProfileOption[] }) {
+export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null; allProfiles: ProfileOption[]; inventoryItems: InventoryItem[] }) {
   return (
     <>
    <Navbar />
@@ -31,65 +27,38 @@ export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles }
       <div className="w-full grid grid-cols-2 gap-6">
         {/* My Fridge */}
         <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom flex flex-col h-[300px]">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-4 flex-shrink-0">
             <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">My Fridge</h2>
-            <a href="#" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>View Full Inventory</a>
+            <a href="/ingredients" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>Manage Inventory</a>
           </div>
-          <div className="space-y-3 flex-1 flex flex-col">
-            <div className="flex gap-3">
+          <div className="space-y-3 flex-1 flex flex-col min-h-0 overflow-hidden">
+            <div className="flex gap-3 flex-shrink-0">
               <div className="flex-1 rounded-lg p-3" style={{backgroundColor: 'rgba(38, 155, 89, 0.2)'}}>
                 <p className="text-xs text-gray-600 mb-1">Total Items</p>
-                <p className="text-2xl font-bold text-gray-700">24</p>
-              </div>
-              <div className="flex-1 bg-red-100 rounded-lg p-3">
-                <p className="text-xs text-gray-600 mb-1">Expiring Soon</p>
-                <p className="text-2xl font-bold text-gray-700">3</p>
+                <p className="text-2xl font-bold text-gray-700">{inventoryItems.length}</p>
               </div>
             </div>
             
-            <div className="space-y-2 flex-1 flex flex-col justify-between">
-              <p className="text-xs font-medium text-gray-700">Categories</p>
-              <div className="space-y-3 flex-1 flex flex-col justify-around">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-600 font-medium w-12">Protein</span>
-                  <div className="flex gap-2 flex-1 mx-2">
-                    <span className="text-xs text-gray-500">Restock</span>
-                    <div className="flex-1 bg-gray-200 rounded h-2 overflow-hidden">
-                      <div className="bg-red-500 h-full rounded" style={{width: '60%'}}></div>
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <p className="text-xs font-medium text-gray-700 mb-2 flex-shrink-0">Recent Ingredients</p>
+              <div className="flex-1 overflow-y-auto space-y-2" style={{scrollbarWidth: 'thin', scrollbarColor: 'rgba(38, 155, 89, 0.5) transparent'}}>
+                {inventoryItems.length > 0 ? (
+                  inventoryItems.map((item) => (
+                    <div key={item.inventory_id} className="flex items-center justify-between p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-700 truncate">{item.ingredient_name}</p>
+                        <p className="text-xs text-gray-500">
+                          {item.quantity} {item.unit || 'unit(s)'}
+                          {item.expiration_date && ` • Exp: ${new Date(item.expiration_date).toLocaleDateString()}`}
+                        </p>
+                      </div>
                     </div>
-                    <span className="text-xs text-gray-500">Full</span>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
+                    <p className="mb-2">No ingredients yet</p>
                   </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-600 font-medium w-12">Dairy</span>
-                  <div className="flex gap-2 flex-1 mx-2">
-                    <span className="text-xs text-gray-500">Restock</span>
-                    <div className="flex-1 bg-gray-200 rounded h-2 overflow-hidden">
-                      <div className="bg-blue-500 h-full rounded" style={{width: '50%'}}></div>
-                    </div>
-                    <span className="text-xs text-gray-500">Full</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-600 font-medium w-12">Grains</span>
-                  <div className="flex gap-2 flex-1 mx-2">
-                    <span className="text-xs text-gray-500">Restock</span>
-                    <div className="flex-1 bg-gray-200 rounded h-2 overflow-hidden">
-                      <div className="bg-yellow-600 h-full rounded" style={{width: '40%'}}></div>
-                    </div>
-                    <span className="text-xs text-gray-500">Full</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-600 font-medium w-12">Produce</span>
-                  <div className="flex gap-2 flex-1 mx-2">
-                    <span className="text-xs text-gray-500">Restock</span>
-                    <div className="flex-1 bg-gray-200 rounded h-2 overflow-hidden">
-                      <div className="bg-green-500 h-full rounded" style={{width: '90%'}}></div>
-                    </div>
-                    <span className="text-xs text-gray-500">Full</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -139,7 +108,7 @@ export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles }
         <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">Recommended for You</h2>
-            <a href="#" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>See All Recipes</a>
+            <a href="/recipes" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>See All Recipes</a>
           </div>
           <div className="flex justify-center items-center gap-12">
             <div className="w-[200px] h-[250px] rounded-xl p-4 dark:border-gray-600 box-shadow-small flex flex-col">
