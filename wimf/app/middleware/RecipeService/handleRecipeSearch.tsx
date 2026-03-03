@@ -8,8 +8,13 @@ const BASE_URL = 'https://api.edamam.com/api/recipes/v2';
 export async function handleRecipeSearch(params: RecipeSearchParams): Promise<EdamamResponse> {
   try {
     const ingredientQuery = Array.isArray(params.query) 
-      ? params.query.join(' ') 
-      : params.query;
+      ? params.query.join(' ').trim()
+      : params.query.trim();
+    
+    if (!ingredientQuery || ingredientQuery.length === 0) {
+      throw new Error('Please add at least one ingredient to search for recipes');
+    }
+    
     const queryParams: Record<string, any> = {
       type: 'public',
       q: ingredientQuery,
@@ -25,28 +30,32 @@ export async function handleRecipeSearch(params: RecipeSearchParams): Promise<Ed
       queryParams.diet = params.mealpreference;
     }
 
+    if (params.calories) {
+      queryParams.calories = params.calories;
+    }
+
+    if (params.fat) {
+      queryParams['nutrients[FAT]'] = params.fat;
+    }
+
+    if (params.carbs) {
+      queryParams['nutrients[CHOCDF]'] = params.carbs;
+    }
+
+    console.log('Sending request to Edamam API with params:', JSON.stringify(queryParams, null, 2));
 
     const response = await axios.get<EdamamResponse>(BASE_URL, {
       params: queryParams,
+      paramsSerializer: {
+        indexes: null,
+      },
     });
-
-    console.log('Number of hits:', response.data.hits?.length || 0);
-    
-    if (response.data.hits && response.data.hits.length > 0) {
-      response.data.hits.forEach((hit, index) => {
-        console.log('Recipe name:', hit.recipe.label);
-        console.log('Image:', hit.recipe.image);
-        console.log('URL:', hit.recipe.url);
-        console.log('Ingredients:', hit.recipe.ingredientLines);
-        console.log('Nutrients:', JSON.stringify(hit.recipe.totalNutrients, null, 2));
-      });
-    }
-
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Error fetching recipes:', error.message);
-      throw new Error(`Failed to fetch recipes: ${error.message}`);
+      console.error('Error response:', error.response?.data);
+      throw new Error(`Failed to fetch recipes: ${error.response?.data?.message || error.message}`);
     }
     throw error;
   }

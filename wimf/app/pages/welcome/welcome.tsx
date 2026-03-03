@@ -1,8 +1,13 @@
-import { Form } from "react-router";
+import { Form, useActionData } from "react-router";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 
+interface ActionData {
+  error?: string;
+}
+
 export function Welcome() {
+  const actionData = useActionData<ActionData>();
   return (
     <main className="flex items-center justify-center min-h-screen pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-8 min-h-0">
@@ -29,6 +34,14 @@ export function Welcome() {
             <div className="flex flex-col md:flex-row w-full">
               {/* Left: form */}
               <div className="w-full md:w-1/2 bg-[#F5F5F5] p-8">
+                {/* Error Alert */}
+                {actionData?.error && (
+                  <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    <p className="font-medium">Login Failed</p>
+                    <p className="text-sm">{actionData.error}</p>
+                  </div>
+                )}
+                
                 <Form method="post" className="space-y-6">
                   <div>
                     <label
