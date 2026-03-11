@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { Toast } from "../Toast";
+import { useMealPlan } from "../../context/MealPlanContext";
+
 interface NutrientInfo {
   label: string;
   quantity: number;
@@ -20,8 +24,24 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
+  const [showToast, setShowToast] = useState(false);
+  const { addRecipe, isRecipeSaved } = useMealPlan();
+
+  const handleAddToMealPlan = () => {
+    addRecipe({
+      label: recipe.label,
+      image: recipe.image,
+      url: recipe.url,
+      ingredientLines: recipe.ingredientLines,
+      totalNutrients: recipe.totalNutrients,
+    });
+    setShowToast(true);
+  };
+
+  const isSaved = isRecipeSaved(recipe.label);
+
   return (
-    <div className="rounded-lg overflow-hidden box-shadow-custom hover:shadow-xl transition bg-white/65 dark:bg-gray-800">
+    <div className="rounded-3xl overflow-hidden box-shadow-custom hover:shadow-xl transition-colors duration-200 bg-white/65 dark:bg-gray-700 flex flex-col h-full">
       {/* Recipe Image */}
       <img
         src={recipe.image}
@@ -30,8 +50,8 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
       />
 
       {/* Recipe Info */}
-      <div className="p-4">
-        <h3 className="font-bold text-lg mb-2 text-gray-700 dark:text-gray-100">
+      <div className="p-4 flex flex-col flex-1">
+        <h3 className="font-bold text-lg mb-2 text-gray-700 dark:text-gray-100 line-clamp-2">
           {recipe.label}
         </h3>
 
@@ -54,14 +74,34 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         </div>
 
         {/* View Recipe Link */}
-        <a
-          href={recipe.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block w-full text-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition font-medium"
-        >
-          View Full Recipe →
-        </a>
+        <div className="flex gap-2 mt-auto">
+          <a
+            href={recipe.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 text-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition font-medium"
+          >
+            View Full →
+          </a>
+          <button
+            onClick={handleAddToMealPlan}
+            disabled={isSaved}
+            className={`flex-1 px-4 py-2 rounded-lg transition font-medium ${
+              isSaved
+                ? "bg-gray-400 cursor-not-allowed text-gray-700"
+                : "bg-emerald-600 hover:bg-emerald-700 text-white"
+            }`}
+          >
+            {isSaved ? "✓ Saved" : "Add to Plan"}
+          </button>
+        </div>
+
+        {showToast && (
+          <Toast
+            message="Recipe Saved!"
+            onDismiss={() => setShowToast(false)}
+          />
+        )}
       </div>
     </div>
   );

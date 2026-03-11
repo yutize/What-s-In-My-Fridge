@@ -75,7 +75,7 @@ export function Settings() {
 
           <div className="space-y-6">
             {/* Appearance Settings */}
-            <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 transition-colors duration-200">
+            <section className="bg-white dark:bg-gray-700 rounded-2xl shadow-sm p-6 transition-colors duration-200">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
                 Appearance
               </h2>
@@ -116,7 +116,7 @@ export function Settings() {
             </section>
 
             {/* Dietary Preferences */}
-            <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 transition-colors duration-200">
+            <section className="bg-white dark:bg-gray-700 rounded-2xl shadow-sm p-6 transition-colors duration-200">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
                 Dietary Preferences
               </h2>
@@ -142,7 +142,7 @@ export function Settings() {
             </section>
 
             {/* Allergies & Restrictions */}
-            <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 transition-colors duration-200">
+            <section className="bg-white dark:bg-gray-700 rounded-2xl shadow-sm p-6 transition-colors duration-200">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
                 Allergies & Food Restrictions
               </h2>
@@ -156,7 +156,7 @@ export function Settings() {
                     onChange={(e) => setNewAllergy(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && addAllergy()}
                     placeholder="Add an allergy or restriction..."
-                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-600 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                   <button
                     onClick={addAllergy}

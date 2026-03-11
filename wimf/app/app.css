@@ -13,6 +13,18 @@
   background-image: linear-gradient(90deg, #10B981 0%, #059669 100%);
 }
 
+.dark .welcome-gradient {
+  background-image: linear-gradient(90deg, #166534 0%, #14532D 100%);
+}
+
+.welcome-overlay {
+  background: linear-gradient(to right, transparent 0%, rgba(5, 150, 105, 0.3) 100%);
+}
+
+.dark .welcome-overlay {
+  background: linear-gradient(to right, transparent 0%, rgba(20, 83, 45, 0.35) 100%);
+}
+
 .welcome-gradient a,
 .welcome-gradient p,
 .welcome-gradient span,
@@ -53,8 +65,32 @@ body {
   background-size: cover;
 }
 
-.dark html,
-.dark body {
+html.dark,
+html.dark body {
   @apply bg-gray-900 text-gray-100;
-  background-image: linear-gradient(135deg, rgba(8, 18, 15, 0.95) 0%, rgba(10, 28, 24, 0.95) 60%, rgba(8, 24, 20, 0.95) 100%);
+  background-image: linear-gradient(135deg, #1A3018 0%, #111E0B 100%);
+}
+
+/* Toast notification animation */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.animate-fade-in-out {
+  animation: fadeInOut 2s ease-in-out forwards;
 }

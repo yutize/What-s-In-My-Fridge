@@ -179,22 +179,25 @@ export function Recipes() {
       <main className="flex flex-col items-center px-6 py-8 gap-10 max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="w-full">
-          <div className="rounded-3xl p-12 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom transition-colors duration-200">
-            <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-100 mb-2">
-              Recipe Search
-            </h1>
-            <p className="text-gray-700 dark:text-gray-200">
-              Find delicious recipes based on your ingredients
-            </p>
-            <p className="text-gray-700 dark:text-gray-200">
-              Note: If you want to see results based on specific dietary preferences or allergies, please go to the "Nutrition" tab and fill out your preferences.
-            </p>
+          <div className="rounded-3xl p-12 welcome-gradient bg-transparent dark:bg-transparent shadow-lg relative overflow-hidden">
+            <div className="absolute inset-0 rounded-3xl welcome-overlay"></div>
+            <div className="relative z-10">
+              <h1 className="text-3xl font-bold text-white mb-2">
+                Recipe Search
+              </h1>
+              <p className="text-white">
+                Find delicious recipes based on your ingredients
+              </p>
+              <p className="text-white">
+                Note: If you want to see results based on specific dietary preferences or allergies, please go to the "Nutrition" tab and fill out your preferences.
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Search Section */}
         <div className="w-full">
-          <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom transition-colors duration-200">
+          <div className="rounded-3xl p-6 dark:border-gray-600 bg-white/65 dark:bg-gray-700 box-shadow-custom transition-colors duration-200">
             <h2 className="text-xl font-bold text-gray-700 dark:text-gray-100 mb-4">
               What ingredients do you have?
             </h2>
@@ -213,8 +216,7 @@ export function Recipes() {
               <button
                 type="submit"
                 disabled={ingredients.length === 0}
-                className="w-full py-3 text-white rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition font-medium text-lg hover:opacity-90"
-                style={{ backgroundColor: ingredients.length === 0 ? undefined : '#269b59' }}
+                className="w-full py-3 text-white rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium text-lg bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-800 dark:hover:bg-emerald-700"
               >
                 {ingredients.length === 0
                   ? "Add ingredients to search"

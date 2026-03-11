@@ -41,8 +41,7 @@ export function IngredientInput({ ingredients, onIngredientsChange }: Ingredient
         <button
           type="button"
           onClick={handleAddIngredient}
-          className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition font-medium"
-          style={{ backgroundColor: '#269b59' }}
+          className="px-6 py-3 text-white rounded-lg transition-colors font-medium bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-800 dark:hover:bg-emerald-700"
         >
           Add
         </button>

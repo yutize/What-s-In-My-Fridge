@@ -11,14 +11,17 @@ export function Nutrition() {
     <>
       <Navbar />
 
-      <main className="flex flex-col items-center px-6 py-8 gap-10 max-w-[1000px] mx-auto">
+      <main className="flex flex-col items-center px-6 py-8 gap-10 max-w-[1000px] mx-auto min-h-screen transition-colors duration-200">
         {/* Header */}
         <div className="w-full">
-          <div className="rounded-3xl p-12 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom transition-colors duration-200">
-            <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-100">My Nutrition Profile</h1>
-            <p className="text-lg text-gray-700 dark:text-gray-200 mt-2">
-              Set your daily goals and dietary preferences
-            </p>
+          <div className="rounded-3xl p-12 welcome-gradient bg-transparent dark:bg-transparent shadow-lg relative overflow-hidden">
+            <div className="absolute inset-0 rounded-3xl welcome-overlay"></div>
+            <div className="relative z-10">
+              <h1 className="text-3xl font-bold text-white">My Nutrition Profile</h1>
+              <p className="text-lg text-white mt-2">
+                Set your daily goals and dietary preferences
+              </p>
+            </div>
           </div>
         </div>
 
@@ -98,7 +101,7 @@ export function Nutrition() {
           <div className="flex gap-4">
             <button
               type="submit"
-              className="flex-1 bg-emerald-600 text-white py-3 px-6 rounded-lg hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 font-medium transition-colors"
+              className="flex-1 bg-emerald-600 dark:bg-emerald-800 text-white py-3 px-6 rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-500 font-medium transition-colors"
             >
               Save Nutrition Profile
             </button>

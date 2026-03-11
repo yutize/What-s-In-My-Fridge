@@ -12,7 +12,7 @@ export function Dashboard( { user }: { user: any }) {
       {/* Welcome Banner */}
       <div className="w-full">
         <div className="rounded-3xl p-12 welcome-gradient bg-transparent dark:bg-transparent shadow-lg relative overflow-hidden">
-          <div className="absolute inset-0 rounded-3xl" style={{background: 'linear-gradient(to right, transparent 0%, rgba(5, 150, 105, 0.3) 100%)'}}></div>
+          <div className="absolute inset-0 rounded-3xl welcome-overlay"></div>
           <div className="relative z-10">
             <h1 className="text-3xl font-bold text-white">Welcome back, {user}!</h1>
             <h2 className="text-xl text-white">Ready to create something delicious today?</h2>
@@ -23,7 +23,7 @@ export function Dashboard( { user }: { user: any }) {
       {/* My Fridge & This Week's Meals Row */}
       <div className="w-full grid grid-cols-2 gap-6">
         {/* My Fridge */}
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom flex flex-col h-[300px] transition-colors duration-200">
+        <div className="rounded-3xl p-6 dark:border-gray-600 bg-white/65 dark:bg-gray-700 box-shadow-custom flex flex-col h-[300px] transition-colors duration-200">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-100">My Fridge</h2>
             <a href="#" className="text-sm font-medium hover:opacity-80 text-emerald-600 dark:text-emerald-400">View Full Inventory</a>
@@ -89,7 +89,7 @@ export function Dashboard( { user }: { user: any }) {
         </div>
 
         {/* This Week's Meals */}
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom flex flex-col h-[300px] transition-colors duration-200">
+        <div className="rounded-3xl p-6 dark:border-gray-600 bg-white/65 dark:bg-gray-700 box-shadow-custom flex flex-col h-[300px] transition-colors duration-200">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-100">This Week's Meals</h2>
             <a href="#" className="text-sm font-medium hover:opacity-80 text-emerald-600 dark:text-emerald-400">View All</a>
@@ -141,7 +141,7 @@ export function Dashboard( { user }: { user: any }) {
 
       {/* Recommended for You */}
       <div className="w-full">
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom transition-colors duration-200">
+        <div className="rounded-3xl p-6 dark:border-gray-600 bg-white/65 dark:bg-gray-700 box-shadow-custom transition-colors duration-200">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-100">Recommended for You</h2>
             <a href="#" className="text-sm font-medium hover:opacity-80 text-emerald-600 dark:text-emerald-400">See All Recipes</a>
@@ -174,7 +174,7 @@ export function Dashboard( { user }: { user: any }) {
       {/* Today's Nutrition & Quick Actions Row */}
       <div className="w-full grid grid-cols-2 gap-6">
         {/* Today's Nutrition */}
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom h-[300px] transition-colors duration-200">
+        <div className="rounded-3xl p-6 dark:border-gray-600 bg-white/65 dark:bg-gray-700 box-shadow-custom h-[300px] transition-colors duration-200">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-100">Today's Nutrition</h2>
             <a href="#" className="text-sm font-medium hover:opacity-80 text-emerald-600 dark:text-emerald-400">View Details</a>
@@ -200,19 +200,19 @@ export function Dashboard( { user }: { user: any }) {
         </div>
 
         {/* Quick Actions */}
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-gray-800 box-shadow-custom h-[300px] flex flex-col transition-colors duration-200">
+        <div className="rounded-3xl p-6 dark:border-gray-600 bg-white/65 dark:bg-gray-700 box-shadow-custom h-[300px] flex flex-col transition-colors duration-200">
           <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-100 mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 gap-2 flex-1 auto-rows-fr">
-            <a href="/nutrition" className="rounded-lg flex items-center justify-center hover:opacity-90 transition" style={{backgroundColor: '#269b59'}}>
+            <a href="/nutrition" className="rounded-lg flex items-center justify-center transition-colors bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-800 dark:hover:bg-emerald-700">
               <span className="text-white font-medium text-center px-4">Daily Nutrition</span>
             </a>
-            <a href="/nutrition" className="rounded-lg flex items-center justify-center hover:opacity-90 transition" style={{backgroundColor: '#269b59'}}>
+            <a href="/nutrition" className="rounded-lg flex items-center justify-center transition-colors bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-800 dark:hover:bg-emerald-700">
               <span className="text-white font-medium text-center px-4">Allergies & Tolerances</span>
             </a>
-            <a href="/recipes" className="rounded-lg flex items-center justify-center hover:opacity-90 transition" style={{backgroundColor: '#269b59'}}>
+            <a href="/recipes" className="rounded-lg flex items-center justify-center transition-colors bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-800 dark:hover:bg-emerald-700">
               <span className="text-white font-medium text-center px-4">Recipe Search</span>
             </a>
-            <a href="/recipes" className="rounded-lg flex items-center justify-center hover:opacity-90 transition" style={{backgroundColor: '#269b59'}}>
+            <a href="/recipes" className="rounded-lg flex items-center justify-center transition-colors bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-800 dark:hover:bg-emerald-700">
               <span className="text-white font-medium text-center px-4">Recipe Results</span>
             </a>
           </div>
