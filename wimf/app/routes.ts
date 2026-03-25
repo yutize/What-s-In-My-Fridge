@@ -9,5 +9,6 @@ export default [
     route("logout", "routes/logout.tsx"),
     route("recipes", "routes/recipes.tsx"),
     route("nutrition", "routes/nutrition.tsx"),
+    route("settings", "routes/settings.tsx"),
     route("savedRecipes", "routes/savedRecipes.tsx"),
 ] satisfies RouteConfig;

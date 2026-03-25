@@ -32,7 +32,7 @@ export function RecipeCard({ recipe, currentRecipes, searchIngredients }: Recipe
   const fatPerServing = Math.round(recipe.totalNutrients.FAT.quantity / servings);
 
   return (
-    <div className="rounded-lg overflow-hidden box-shadow-custom hover:shadow-xl transition bg-white/65 dark:bg-white/65">
+    <div className="rounded-lg overflow-hidden box-shadow-custom hover:shadow-xl transition bg-white/65 dark:bg-gray-800">
       <div className="relative">
         <img
           src={recipe.image}
@@ -50,7 +50,7 @@ export function RecipeCard({ recipe, currentRecipes, searchIngredients }: Recipe
           {searchIngredients && <input type="hidden" name="searchIngredients" value={JSON.stringify(searchIngredients)} />}
           <button
             type="submit"
-            className="absolute top-2 right-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition shadow-lg"
+            className="absolute top-2 right-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition shadow-lg"
             title="Save recipe"
           >
             Save
@@ -59,16 +59,16 @@ export function RecipeCard({ recipe, currentRecipes, searchIngredients }: Recipe
       </div>
 
       <div className="p-4">
-        <h3 className="font-bold text-lg mb-2 text-gray-700 dark:text-gray-700">
+        <h3 className="font-bold text-lg mb-2 text-gray-700 dark:text-gray-100">
           {recipe.label}
         </h3>
         <p className="text-xs text-gray-500 mb-2">{servings} servings</p>
 
-        <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-700">
+        <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-200">
           <div>Below are the nutritional information per serving</div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-700">
+        <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-700 dark:text-gray-200">
           <div>🔥 {caloriesPerServing} cal</div>
           <div>💪 {proteinPerServing}g protein</div>
           <div>🍞 {carbsPerServing}g carbs</div>
@@ -76,10 +76,10 @@ export function RecipeCard({ recipe, currentRecipes, searchIngredients }: Recipe
         </div>
 
         <div className="mb-3">
-          <p className="text-xs text-gray-700 dark:text-gray-700 mb-1">
+          <p className="text-xs text-gray-600 dark:text-gray-300 mb-1">
             Ingredients:
           </p>
-          <p className="text-sm text-gray-700 dark:text-gray-700 line-clamp-2">
+          <p className="text-sm text-gray-700 dark:text-gray-200 line-clamp-2">
             {recipe.ingredientLines.join(", ")}
           </p>
         </div>
@@ -88,8 +88,7 @@ export function RecipeCard({ recipe, currentRecipes, searchIngredients }: Recipe
           href={recipe.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block w-full text-center px-4 py-2 text-white rounded-lg hover:opacity-90 transition font-medium"
-          style={{ backgroundColor: '#269b59' }}
+          className="inline-block w-full text-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition font-medium"
         >
           View Full Recipe →
         </a>
