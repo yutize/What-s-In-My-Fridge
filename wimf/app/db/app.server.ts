@@ -4,11 +4,9 @@ import path from "path";
 const dbPath = path.resolve("app.db");
 export const db = new Database(dbPath);
 
-// Enable foreign keys
 db.pragma("foreign_keys = ON");
 
 export function initializeDatabase() {
-  // Create Users table
   db.exec(`
     CREATE TABLE IF NOT EXISTS Users (
       user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,11 +18,12 @@ export function initializeDatabase() {
     )
   `);
 
-  // Create Ingredients table
   db.exec(`
     CREATE TABLE IF NOT EXISTS Ingredients (
       ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,
       ingredient_name TEXT UNIQUE NOT NULL,
+      category TEXT,
+      uom TEXT NOT NULL,
       calories REAL,
       protein REAL,
       carbs REAL,
@@ -34,7 +33,6 @@ export function initializeDatabase() {
     )
   `);
 
-  // Create Inventory table
   db.exec(`
     CREATE TABLE IF NOT EXISTS Inventory (
       inventory_id INTEGER PRIMARY KEY AUTOINCREMENT,

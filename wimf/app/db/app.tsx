@@ -22,10 +22,11 @@ export function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS Ingredients (
       ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,
       ingredient_name TEXT NOT NULL,
-      unit TEXT,
+      category TEXT,
       calories_per_unit REAL,
       protein_per_unit REAL,
       carbs_per_unit REAL,
+      uom TEXT,
       fat_per_unit REAL
     );
 
@@ -42,6 +43,7 @@ export function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS NutritionProfile (
       nutrition_id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
+      profileName TEXT,
       caloriesLow INTEGER,
       caloriesHigh INTEGER,
       protein INTEGER,
@@ -49,6 +51,19 @@ export function initializeDatabase() {
       fat INTEGER,
       allergy STRING,
       preference STRING,
+      isActive INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS RecipeSave (
+      recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      recipe_name TEXT NOT NULL,
+      recipe_url TEXT NOT NULL,
+      recipe_image TEXT,
+      servings INTEGER,
+      ingredients TEXT,
       FOREIGN KEY (user_id) REFERENCES Users(user_id)
     );
   `);

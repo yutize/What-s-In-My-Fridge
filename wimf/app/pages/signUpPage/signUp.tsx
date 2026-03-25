@@ -3,6 +3,7 @@ import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 
 interface ActionData {
+  success?: boolean;
   errors?: {
     email?: string;
     password?: string;
@@ -45,6 +46,14 @@ export function SignUp() {
 
         <div className="max-w-[400px] w-full space-y-6 px-4">
           <div className="rounded-3xl border border-gray-200 p-8 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+            
+            {/* Success Alert */}
+            {actionData?.success && (
+              <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg dark:bg-green-900 dark:border-green-700 dark:text-green-200">
+                <p className="font-medium">Success!</p>
+                <p className="text-sm">Account created successfully! Redirecting to login...</p>
+              </div>
+            )}
             
             {/* General Error Alert */}
             {errors?.general && (
