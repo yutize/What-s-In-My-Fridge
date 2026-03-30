@@ -7,6 +7,10 @@ import { redirect } from "react-router";
 import type { SavedRecipe } from "~/types/recipe";
 import type { ProfileOption, InventoryItem } from "~/types/dashboard";
 
+interface ExpiringItem extends InventoryItem {
+  days_until_expiration: number;
+}
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Dashboard" },
@@ -45,8 +49,22 @@ export async function loader({ request }: Route.LoaderArgs) {
     WHERE inv.user_id = ? 
       AND (inv.expiration_date IS NULL OR DATE(inv.expiration_date) >= DATE('now'))
   `).all(userId);
+
+  const expiringSoonItems = (inventoryItems as InventoryItem[])
+    .filter((item) => !!item.expiration_date)
+    .map((item) => {
+      const now = new Date();
+      const expiration = new Date(item.expiration_date as string);
+      const diffMs = expiration.getTime() - now.getTime();
+      const daysUntil = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      return {
+        ...item,
+        days_until_expiration: daysUntil,
+      };
+    })
+    .filter((item) => item.days_until_expiration >= 0 && item.days_until_expiration <= 7);
   
-  return { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems };
+  return { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems, expiringSoonItems };
 }
 
 export async function action(args: Route.ActionArgs) {
@@ -65,5 +83,6 @@ export default function DashboardRoute({ loaderData }: Route.ComponentProps) {
     nutritionProfile={loaderData.nutritionProfile || null} 
     allProfiles={(loaderData.allProfiles || []) as unknown as ProfileOption[]} 
     inventoryItems={(loaderData.inventoryItems || []) as unknown as InventoryItem[]} 
+    expiringSoonItems={(loaderData.expiringSoonItems || []) as unknown as ExpiringItem[]}
   />;
 }

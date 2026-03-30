@@ -10,7 +10,7 @@ interface ExpiringItem extends InventoryItem {
   days_until_expiration: number;
 }
 
-export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems, expiringSoonItems }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null; allProfiles: ProfileOption[]; inventoryItems: InventoryItem[]; expiringSoonItems: ExpiringItem[] }) {
+export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems, expiringSoonItems = [] }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null; allProfiles: ProfileOption[]; inventoryItems: InventoryItem[]; expiringSoonItems?: ExpiringItem[] }) {
   return (
     <>
    <Navbar />
