@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs } from "react-router";
-import { db } from "../../db/app";
+import { db } from "../../db/app.server";
 
 export async function handleUpdateNutrition(formData: FormData, userId: number) {
   const profileName = formData.get("profileName");

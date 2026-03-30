@@ -49,6 +49,37 @@ export function initializeDatabase() {
     )
   `);
 
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS NutritionProfile (
+      nutrition_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      profileName TEXT,
+      caloriesLow INTEGER,
+      caloriesHigh INTEGER,
+      protein INTEGER,
+      carbs INTEGER,
+      fat INTEGER,
+      allergy TEXT,
+      preference TEXT,
+      isActive INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    )
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS RecipeSave (
+      recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      recipe_name TEXT NOT NULL,
+      recipe_url TEXT NOT NULL,
+      recipe_image TEXT,
+      servings INTEGER,
+      ingredients TEXT,
+      FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    )
+  `);
+
   console.log("✅ Database initialized successfully");
 }
 

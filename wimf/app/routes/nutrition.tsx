@@ -23,9 +23,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export async function action(args: Route.ActionArgs) {
-  const userId = await getUserId(args.request);
-  const formData = await args.request.formData();
-  return handleUpdateNutrition(formData, userId);
+  try {
+    const userId = await requireUserId(args.request);
+    const formData = await args.request.formData();
+    return handleUpdateNutrition(formData, userId);
+  } catch (error) {
+    console.error("Nutrition update failed:", error);
+    return { success: false, message: "Failed to save nutrition profile. Please try again." };
+  }
 }
 export default function NutritionRoute({ loaderData }: Route.ComponentProps) {
   return <Nutrition nutritionProfile={loaderData.nutritionProfile || null} />;
