@@ -5,8 +5,8 @@ const BASE_URL = 'https://api.edamam.com/api/recipes/v2';
 
 export async function handleRecipeSearch(params: RecipeSearchParams): Promise<EdamamResponse> {
   try {
-    const APP_ID = process.env.APP_ID;
-    const APP_KEY = process.env.API_KEY;
+    const APP_ID = (process.env.APP_ID ?? '').trim();
+    const APP_KEY = (process.env.API_KEY ?? '').trim();
 
     if (!APP_ID || !APP_KEY) {
       throw new Error('Missing Edamam credentials on server: APP_ID/API_KEY are not configured');
@@ -47,7 +47,7 @@ export async function handleRecipeSearch(params: RecipeSearchParams): Promise<Ed
       queryParams['nutrients[CHOCDF]'] = params.carbs;
     }
 
-    console.log('Sending request to Edamam API with params:', JSON.stringify(queryParams, null, 2));
+    console.log('Sending request to Edamam API');
 
     const response = await axios.get<EdamamResponse>(BASE_URL, {
       params: queryParams,
