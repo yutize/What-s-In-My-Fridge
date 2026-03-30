@@ -30,6 +30,14 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
           APP_ID: ${{ secrets.APP_ID }}
 
+      - name: Prepare publish dir
+        working-directory: wimf
+        run: |
+          ls -la build/client || true
+          # create .nojekyll to prevent GitHub Pages/Jekyll processing
+          touch build/client/.nojekyll
+          echo ".nojekyll created" && ls -la build/client/.nojekyll
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
