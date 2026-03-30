@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"my-mcp-server-746b9406": {
+			"url": "https://mcp.vercel.com",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
