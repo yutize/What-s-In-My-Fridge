@@ -1,9 +1,8 @@
 import axios from 'axios';
 import type { EdamamResponse, RecipeSearchParams } from '~/services/edamamApi';
 
-// Prefer server environment variables, fall back to VITE_ prefixed vars available at build time
-const APP_ID = process.env.APP_ID || process.env.VITE_APP_ID || (typeof import.meta !== 'undefined' ? (import.meta.env?.VITE_APP_ID as string | undefined) : undefined);
-const APP_KEY = process.env.API_KEY || process.env.VITE_API_KEY || (typeof import.meta !== 'undefined' ? (import.meta.env?.VITE_API_KEY as string | undefined) : undefined);
+const APP_ID = process.env.APP_ID;
+const APP_KEY = process.env.API_KEY;
 const BASE_URL = 'https://api.edamam.com/api/recipes/v2';
 
 export async function handleRecipeSearch(params: RecipeSearchParams): Promise<EdamamResponse> {
