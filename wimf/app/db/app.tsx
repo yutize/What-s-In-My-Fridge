@@ -1,7 +1,11 @@
 import Database from "better-sqlite3";
 import path from "path";
 
-const dbPath = path.resolve(process.cwd(), "app.db");
+const dbPath = process.env.SQLITE_PATH
+  ? path.resolve(process.env.SQLITE_PATH)
+  : process.env.VERCEL
+    ? "/tmp/app.db"
+    : path.resolve(process.cwd(), "app.db");
 export const db = new Database(dbPath);
 
 db.pragma("foreign_keys = ON");
