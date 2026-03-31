@@ -12,18 +12,6 @@ export function Welcome() {
     <main className="flex items-center justify-center min-h-screen pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-8 min-h-0">
         <header className="flex flex-col items-center gap-6">
-          <div className="w-[300px] max-w-[100vw] p-4">
-            <img
-              src={logoLight}
-              alt="What's In My Fridge"
-              className="block w-full dark:hidden"
-            />
-            <img
-              src={logoDark}
-              alt="What's In My Fridge"
-              className="hidden w-full dark:block"
-            />
-          </div>
           <h1 className="text-3xl font-bold" style={{color: '#047857'}}>
             Welcome Back
           </h1>
