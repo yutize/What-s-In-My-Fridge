@@ -8,18 +8,6 @@ export function About() {
         <div className="max-w-4xl w-full">
           <div className="flex flex-col items-center gap-8">
             <header className="flex flex-col items-center gap-6">
-              <div className="w-[400px] max-w-[100vw] p-4">
-                <img
-                  src={logoLight}
-                  alt="What's In My Fridge"
-                  className="block w-full dark:hidden"
-                />
-                <img
-                  src={logoDark}
-                  alt="What's In My Fridge"
-                  className="hidden w-full dark:block"
-                />
-              </div>
               <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">
                 About What's In My Fridge
               </h1>
