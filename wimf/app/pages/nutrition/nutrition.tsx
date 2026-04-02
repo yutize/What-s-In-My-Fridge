@@ -111,7 +111,7 @@ export function Nutrition({
         {/* Full-width page header */}
         <div className="rounded-3xl p-8 mb-6 bg-white/65 dark:bg-gray-800 box-shadow-custom transition-colors duration-200">
           <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-100">
-            AI Nutrition Profile Assistant
+            My Nutrition Profile
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-1">
             Configure your nutrition goals manually or chat with the AI to set them up instantly.
