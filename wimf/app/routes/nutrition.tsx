@@ -10,16 +10,28 @@ export function meta({}: Route.MetaArgs) {
     { name: "nutrition", content: "Nutrition page." },
   ];
 }
+
 export async function loader({ request }: Route.LoaderArgs) {
   await requireUserId(request);
   const userId = await getUserId(request);
-  
 
-  const nutritionProfile = db.prepare(
-    "SELECT * FROM NutritionProfile WHERE user_id = ? ORDER BY nutrition_id DESC LIMIT 1"
-  ).get(userId);
-  
-  return { nutritionProfile };
+  const nutritionProfile = db
+    .prepare(
+      "SELECT * FROM NutritionProfile WHERE user_id = ? ORDER BY nutrition_id DESC LIMIT 1"
+    )
+    .get(userId);
+
+  // Fetch last 50 messages of chat history for the user
+  const chatHistory = db
+    .prepare(
+      `SELECT role, content FROM ChatHistory 
+       WHERE user_id = ? 
+       ORDER BY created_at DESC 
+       LIMIT 50`
+    )
+    .all(userId) as Array<{ role: string; content: string }>;
+
+  return { nutritionProfile, chatHistory: chatHistory.reverse() };
 }
 
 export async function action(args: Route.ActionArgs) {
@@ -29,9 +41,18 @@ export async function action(args: Route.ActionArgs) {
     return handleUpdateNutrition(formData, userId);
   } catch (error) {
     console.error("Nutrition update failed:", error);
-    return { success: false, message: "Failed to save nutrition profile. Please try again." };
+    return {
+      success: false,
+      message: "Failed to save nutrition profile. Please try again.",
+    };
   }
 }
+
 export default function NutritionRoute({ loaderData }: Route.ComponentProps) {
-  return <Nutrition nutritionProfile={loaderData.nutritionProfile || null} />;
-} 
+  return (
+    <Nutrition
+      nutritionProfile={loaderData.nutritionProfile || null}
+      chatHistory={loaderData.chatHistory}
+    />
+  );
+}

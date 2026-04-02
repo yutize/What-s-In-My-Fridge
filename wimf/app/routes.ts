@@ -11,4 +11,5 @@ export default [
     route("nutrition", "routes/nutrition.tsx"),
     route("settings", "routes/settings.tsx"),
     route("savedRecipes", "routes/savedRecipes.tsx"),
+    route("api/nutrition-chat", "routes/nutritionChat.tsx"),
 ] satisfies RouteConfig;
