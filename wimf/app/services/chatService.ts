@@ -159,7 +159,7 @@ To build you a personalized meal plan, I'd love to learn a bit about you! Could 
   • Your **primary goal** (lose weight, maintain, build muscle, or body recomp)
   • Any **allergies** or **dietary preferences** you have (e.g. vegetarian, vegan, paleo, keto, dairy-free, nut-free, etc.)
 
-Feel free to share as much or as little as you're comfortable with — you can also skip this and just tell me what macros you want! 😊"
+Feel free to share as much or as little as you're comfortable with — you can also skip this and just tell me what macros you want!"
 
 Once you have all four pieces of info (height, weight, age+gender optional, activity, goal), call calculateAndApplyMealPlan immediately.
 
