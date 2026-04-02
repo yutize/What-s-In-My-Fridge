@@ -2,7 +2,7 @@
 
 This project is a web application that allows users to input their nutritional goals and preferences—such as calories, protein, carbohydrates, fats, and more—to search for recipes that match their profile. The app also includes a fridge inventory system, enabling users to track ingredients they currently have at home. This helps suggest recipes based on available items, reducing food waste and making meal planning easier.
 
-Recipe data is fetched using the Edamam API, ensuring accurate nutritional information and a wide selection of meal options.
+Recipe data is fetched using the Edamam API, ensuring accurate nutritional information and a wide selection of meal options. There is also a AI powered agent via Gemini which allows for users to calculate their needs based on their body weight and height and etc.
 
 ---
 
@@ -48,6 +48,8 @@ This project uses:
 - TypeScript: https://www.typescriptlang.org/docs/
 - Node.js: https://nodejs.org/docs/latest/api/
 - SQLite: https://nodejs.org/docs/latest/api/
+- Vercel: https://vercel.com/docs
+- Gemini: https://ai.google.dev/gemini-api/docs
 - Edamam API: https://developer.edamam.com/edamam-docs-recipe-api?gad_source=1&gad_campaignid=23449580773&gbraid=0AAAAADvEbgYdc_zWAvBlnfCTrG0LTcbQg&gclid=CjwKCAiAybfLBhAjEiwAI0mBBhdzvt_7pZpvFpC2h1hzpK6rDcRvrNrABLn-IBgs3y7ANl0ZL3y20xoCg-oQAvD_BwE
 - Cypress (Used for United/Atuomated Testing): https://docs.cypress.io/app/get-started/why-cypress
 ---
