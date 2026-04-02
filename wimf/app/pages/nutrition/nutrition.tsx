@@ -172,7 +172,7 @@ export function Nutrition({
                     label="Desired Calories Minimum"
                     id="caloriesLow"
                     name="caloriesLow"
-                    placeholder="e.g. 1800 kcal"
+                    placeholder="400 kcal"
                     unit="kcal"
                     value={caloriesLow}
                     onChange={setCaloriesLow}
@@ -181,7 +181,7 @@ export function Nutrition({
                     label="Desired Calories Maximum"
                     id="caloriesHigh"
                     name="caloriesHigh"
-                    placeholder="e.g. 2200 kcal"
+                    placeholder="800 kcal"
                     unit="kcal"
                     value={caloriesHigh}
                     onChange={setCaloriesHigh}
@@ -190,7 +190,7 @@ export function Nutrition({
                     label="Protein"
                     id="protein"
                     name="protein"
-                    placeholder="e.g. 150 g"
+                    placeholder="50g"
                     unit="g"
                     value={protein}
                     onChange={setProtein}
@@ -199,7 +199,7 @@ export function Nutrition({
                     label="Carbohydrates"
                     id="carbs"
                     name="carbs"
-                    placeholder="e.g. 100 g"
+                    placeholder="45g"
                     unit="g"
                     value={carbs}
                     onChange={setCarbs}
@@ -208,7 +208,7 @@ export function Nutrition({
                     label="Fat"
                     id="fat"
                     name="fat"
-                    placeholder="e.g. 60 g"
+                    placeholder="40g"
                     unit="g"
                     value={fat}
                     onChange={setFat}
