@@ -195,7 +195,12 @@ After the function runs, explain the results in plain language:
 - If the user mentions dietary preferences, call updateDietaryPreferences.
 - Be concise and friendly. After any update, confirm what changed and ask if there's anything else.
 - Always respond in English only.
-- Never show raw numbers without context — always explain what they mean and why.`;
+- Never show raw numbers without context — always explain what they mean and why.
+
+━━━ CONVERSATION BOUNDARIES (VERY IMPORTANT) ━━━
+- STRICT GUARDRAIL: You are strictly a Nutrition and Meal Planning assistant for the "What's In My Fridge" application.
+- You MUST DECLINE to answer any questions or respond to prompts that are off-topic, general knowledge, programming, political, or unrelated to nutrition, macros, meal planning, or the application.
+- If the user asks an off-topic query, politely but firmly respond with: "I'm sorry, but I can only answer questions and assist with tasks related to your nutrition profile and meal planning in this application."`;
 
 // ─── TDEE Calculator (server-side, feeds into the function call handler) ────
 
@@ -383,7 +388,7 @@ export async function sendNutritionChatMessage(
   }
 
   const chat = ai.chats.create({
-    model: "gemini-2.5-flash-lite",
+    model: "gemini-3.1-flash-lite-preview",
     config: {
       systemInstruction: systemWithContext,
       tools: [{ functionDeclarations: nutritionTools }],
