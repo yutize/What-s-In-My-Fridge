@@ -62,6 +62,18 @@ export function About() {
 
                   <div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                      <span className="text-2xl">🤖</span>
+                      AI Nutrition Assistant
+                    </h3>
+                    <p className="text-gray-700 leading-relaxed">
+                      Our AI assistant helps users estimate macro targets and nutrition goals from information 
+                      they provide, such as activity level, goals, and dietary preferences. The assistant can suggest 
+                      calories, protein, carbs, and fats, then help apply those values directly to your nutrition profile.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2 flex items-center gap-2">
                       <span className="text-2xl">📱</span>
                       Dashboard Overview
                     </h3>
@@ -82,6 +94,9 @@ export function About() {
                   </li>
                   <li className="leading-relaxed">
                     <strong>Set Your Nutrition Profile:</strong> Configure your dietary preferences, allergies, and nutritional goals
+                  </li>
+                  <li className="leading-relaxed">
+                    <strong>Use AI Nutrition Guidance:</strong> Chat with the assistant to calculate suggested macro targets based on your inputs
                   </li>
                   <li className="leading-relaxed">
                     <strong>Discover Recipes:</strong> Use your inventory to automatically find matching recipes, or search with custom ingredients
