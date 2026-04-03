@@ -1,13 +1,19 @@
 import { db } from "../../db/app.server";
 
 export async function handleUpdateNutrition(formData: FormData, userId: number) {
-  const profileName = formData.get("profileName");
-  const caloriesLow = formData.get("caloriesLow");
-  const caloriesHigh = formData.get("caloriesHigh");
+  const profileName = formData.get("profileName") as string | null;
+  
+  const sanitize = (val: FormDataEntryValue | null) => {
+    if (!val || typeof val !== "string" || val.trim() === "") return null;
+    return parseInt(val, 10);
+  };
+
+  const caloriesLow = sanitize(formData.get("caloriesLow"));
+  const caloriesHigh = sanitize(formData.get("caloriesHigh"));
+  const protein = sanitize(formData.get("protein"));
+  const carbs = sanitize(formData.get("carbs"));
+  const fat = sanitize(formData.get("fat"));
   const id = userId;
-  const protein = formData.get("protein");
-  const carbs = formData.get("carbs");
-  const fat = formData.get("fat");
 
 
   let allergies: string[];

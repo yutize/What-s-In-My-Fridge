@@ -74,18 +74,19 @@ export async function action({ request }: Route.ActionArgs) {
 
   const ingredients = formData.getAll('ingredient') as string[];
   console.log('Received ingredients from form:', ingredients);
-  
-  const nutritionProfile = db.prepare(
-    "SELECT * FROM NutritionProfile WHERE user_id = ? AND isActive = 1"
-  ).get(userId) as { 
-    caloriesLow: number; 
-    caloriesHigh: number; 
-    protein: number;
-    carbs: number; 
-    fat: number;
-    allergy: string;
-    preference: string;
-  } | undefined;
+
+  if (!ingredients || ingredients.length === 0) {
+    return { error: 'Please add at least one ingredient before searching.' };
+  }
+
+  let nutritionProfile: { caloriesLow: number; caloriesHigh: number; protein: number; carbs: number; fat: number; allergy: string; preference: string } | undefined;
+  try {
+    nutritionProfile = db.prepare(
+      "SELECT * FROM NutritionProfile WHERE user_id = ? AND isActive = 1"
+    ).get(userId) as typeof nutritionProfile;
+  } catch (e) {
+    console.error('Failed to fetch nutrition profile:', e);
+  }
 
   let calories: string | undefined;
   let fatRange: string | undefined;
@@ -99,44 +100,32 @@ export async function action({ request }: Route.ActionArgs) {
     } else if (nutritionProfile.caloriesHigh) {
       calories = `${nutritionProfile.caloriesHigh}`;
     } else if (nutritionProfile.caloriesLow) {
-      calories = `${nutritionProfile.caloriesLow}%2B`;
+      calories = `${nutritionProfile.caloriesLow}+`;
     }
-
-    if (nutritionProfile.fat) {
-      fatRange = `0-${nutritionProfile.fat}`;
-    }
-
-    if (nutritionProfile.carbs) {
-      carbsRange = `0-${nutritionProfile.carbs}`;
-    }
-
+    if (nutritionProfile.fat) fatRange = `0-${nutritionProfile.fat}`;
+    if (nutritionProfile.carbs) carbsRange = `0-${nutritionProfile.carbs}`;
     if (nutritionProfile.allergy) {
-      try {
-        allergies = JSON.parse(nutritionProfile.allergy);
-      } catch (e) {
-        console.error('Error parsing allergies:', e);
-      }
+      try { allergies = JSON.parse(nutritionProfile.allergy); } catch (e) { console.error('Error parsing allergies:', e); }
     }
-
     if (nutritionProfile.preference) {
-      try {
-        mealpreference = JSON.parse(nutritionProfile.preference);
-      } catch (e) {
-        console.error('Error parsing preferences:', e);
-      }
+      try { mealpreference = JSON.parse(nutritionProfile.preference); } catch (e) { console.error('Error parsing preferences:', e); }
     }
   }
-    
-  const results = await handleRecipeSearch({
-    query: ingredients,
-    calories,
-    fat: fatRange,
-    carbs: carbsRange,
-    allergies,
-    mealpreference,
-  });
-  
-  return { recipes: results };
+
+  try {
+    const results = await handleRecipeSearch({
+      query: ingredients,
+      calories,
+      fat: fatRange,
+      carbs: carbsRange,
+      allergies,
+      mealpreference,
+    });
+    return { recipes: results };
+  } catch (error) {
+    console.error('Recipe search failed:', error);
+    return { error: error instanceof Error ? error.message : 'Failed to search recipes. Please try again.' };
+  }
 }
 
 
