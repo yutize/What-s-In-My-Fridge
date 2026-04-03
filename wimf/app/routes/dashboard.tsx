@@ -3,7 +3,8 @@ import { Dashboard } from "../pages/dashboard/dashboard";
 import { requireUserId, getUserId } from "~/session.server";
 import { db } from "~/db/app.server";
 import { switchProfile } from "../middleware/NutritionService/nutritionController";
-import { redirect } from "react-router";
+import { redirect, useNavigation, useFetcher } from "react-router";
+import type { NutritionProfile } from "~/types/nutrition";
 import type { SavedRecipe } from "~/types/recipe";
 import type { ProfileOption, InventoryItem } from "~/types/dashboard";
 import { getAIRecipePicks, fetchEdamamRecipeDetail } from "~/services/recipePicksService";
@@ -145,17 +146,34 @@ export async function action(args: Route.ActionArgs) {
   // ── Default: switch nutrition profile ─────────────────────────────────────
   const profileId = parseInt(formData.get("profileId") as string);
   await switchProfile(userId, profileId);
-  return redirect("/dashboard");
+
+  // Return the new profile immediately so the hub can update without a full re-fetch of AI data
+  const newProfile = db.prepare(
+    "SELECT * FROM NutritionProfile WHERE user_id = ? AND isActive = 1"
+  ).get(userId) as NutritionProfile | undefined;
+  return { success: true, newProfile };
+}
+
+export function shouldRevalidate({ actionResult, defaultShouldRevalidate }: any) {
+  // If we just switched a profile, don't re-run the slow AI recipe generator.
+  if (actionResult?.success && actionResult?.newProfile) {
+    return false;
+  }
+  return defaultShouldRevalidate;
 }
 
 export default function DashboardRoute({ loaderData, actionData }: Route.ComponentProps) {
   // Prefer action data recipePicks (Surprise Me result) over loader data
+  const fetcher = useFetcher();
   const recipePicks = (actionData as any)?.recipePicks ?? loaderData.recipePicks;
+  
+  // To truly only update the hub in-place, prefer fetcher's newProfile
+  const activeProfile = fetcher.data?.newProfile ?? loaderData.nutritionProfile;
 
   return <Dashboard
     user={loaderData.user?.firstName || "User"}
     savedRecipes={(loaderData.savedRecipes || []) as unknown as SavedRecipe[]}
-    nutritionProfile={loaderData.nutritionProfile || null}
+    nutritionProfile={activeProfile as NutritionProfile | null}
     allProfiles={(loaderData.allProfiles || []) as unknown as ProfileOption[]}
     inventoryItems={(loaderData.inventoryItems || []) as unknown as InventoryItem[]}
     expiringSoonItems={(loaderData.expiringSoonItems || []) as unknown as ExpiringItem[]}

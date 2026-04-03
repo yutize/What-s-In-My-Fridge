@@ -1,4 +1,5 @@
-import { Form, useNavigation } from "react-router";
+import { Form, useNavigation, useFetcher } from "react-router";
+import { useEffect, useState } from "react";
 import type { SavedRecipe } from "~/types/recipe";
 import type { NutritionProfile } from "~/types/nutrition";
 import type { ProfileOption, InventoryItem } from "~/types/dashboard";
@@ -287,9 +288,19 @@ export function Dashboard({
   recipePicks: RecipePicksResult | null;
 }) {
   const navigation = useNavigation();
+  const fetcher = useFetcher();
+  
   const isSurprising =
     navigation.state === "submitting" &&
     navigation.formData?.get("actionType") === "surpriseMe";
+
+  const currentProfile = (fetcher.data as any)?.newProfile ?? nutritionProfile;
+
+  const calValue = currentProfile?.caloriesHigh || currentProfile?.caloriesLow || 0;
+  const calProgress = Math.min((calValue / 2500) * 100, 100);
+  const proteinProgress = Math.min(((currentProfile?.protein || 0) / 150) * 100, 100);
+  const carbProgress = Math.min(((currentProfile?.carbs || 0) / 300) * 100, 100);
+  const fatProgress = Math.min(((currentProfile?.fat || 0) / 100) * 100, 100);
 
   return (
     <div className="bg-surface text-on-surface min-h-[100vh]">
@@ -385,12 +396,33 @@ export function Dashboard({
                     Tracking your daily editorial balance
                   </p>
                 </div>
-                <a
-                  href="/nutrition"
-                  className="text-xs font-label uppercase tracking-widest text-primary font-semibold hover:underline"
-                >
-                  {nutritionProfile ? "Manage Profile" : "Setup Profile"}
-                </a>
+                <div className="flex items-center gap-6">
+                  {allProfiles && allProfiles.length > 1 && (
+                    <fetcher.Form method="post" className="relative group flex items-center">
+                      <select 
+                        name="profileId"
+                        onChange={(e) => e.target.form && fetcher.submit(e.target.form)}
+                        value={currentProfile?.nutrition_id || ""}
+                        className="appearance-none bg-surface-container hover:bg-surface-container-high rounded-full px-4 py-1.5 text-[10px] font-label uppercase tracking-widest text-on-surface-variant font-semibold cursor-pointer outline-none border-none pr-8 transition-colors"
+                      >
+                        {allProfiles.map((p) => (
+                          <option key={p.nutrition_id} value={p.nutrition_id}>
+                            {p.profileName || `Profile ${p.nutrition_id}`}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="material-symbols-outlined absolute right-2 text-on-surface-variant text-sm pointer-events-none group-hover:text-primary transition-colors">
+                        expand_more
+                      </span>
+                    </fetcher.Form>
+                  )}
+                  <a
+                    href="/nutrition"
+                    className="text-xs font-label uppercase tracking-widest text-primary font-bold hover:underline"
+                  >
+                    {nutritionProfile ? "Manage Profile" : "Setup Profile"}
+                  </a>
+                </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
@@ -404,11 +436,14 @@ export function Dashboard({
                     </span>
                   </div>
                   <div className="text-2xl font-serif text-on-surface">
-                    {nutritionProfile?.caloriesLow ? `${nutritionProfile.caloriesLow}` : "N/A"}
-                    {nutritionProfile?.caloriesHigh ? `–${nutritionProfile.caloriesHigh}` : ""}
+                    {currentProfile?.caloriesLow ? `${currentProfile.caloriesLow}` : "N/A"}
+                    {currentProfile?.caloriesHigh ? `–${currentProfile.caloriesHigh}` : ""}
                   </div>
                   <div className="mt-2 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                    <div className="h-full bg-primary w-[75%] rounded-full" />
+                    <div 
+                      className="h-full bg-primary rounded-full transition-all duration-1000 ease-out" 
+                      style={{ width: `${calProgress}%` }}
+                    />
                   </div>
                 </div>
 
@@ -422,11 +457,14 @@ export function Dashboard({
                     </span>
                   </div>
                   <div className="text-2xl font-serif text-on-surface">
-                    {nutritionProfile?.protein || "-"}
+                    {currentProfile?.protein || "-"}
                     <span className="text-sm font-body ml-1">g</span>
                   </div>
                   <div className="mt-2 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                    <div className="h-full bg-secondary w-[60%] rounded-full" />
+                    <div 
+                      className="h-full bg-secondary rounded-full transition-all duration-1000 ease-out" 
+                      style={{ width: `${proteinProgress}%` }}
+                    />
                   </div>
                 </div>
 
@@ -440,11 +478,14 @@ export function Dashboard({
                     </span>
                   </div>
                   <div className="text-2xl font-serif text-on-surface">
-                    {nutritionProfile?.carbs || "-"}
+                    {currentProfile?.carbs || "-"}
                     <span className="text-sm font-body ml-1">g</span>
                   </div>
                   <div className="mt-2 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                    <div className="h-full bg-tertiary w-[45%] rounded-full" />
+                    <div 
+                      className="h-full bg-tertiary rounded-full transition-all duration-1000 ease-out" 
+                      style={{ width: `${carbProgress}%` }}
+                    />
                   </div>
                 </div>
 
@@ -456,11 +497,14 @@ export function Dashboard({
                     </span>
                   </div>
                   <div className="text-2xl font-serif text-on-surface">
-                    {nutritionProfile?.fat || "-"}
+                    {currentProfile?.fat || "-"}
                     <span className="text-sm font-body ml-1">g</span>
                   </div>
                   <div className="mt-2 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                    <div className="h-full bg-on-surface-variant w-[30%] rounded-full" />
+                    <div 
+                      className="h-full bg-outline rounded-full transition-all duration-1000 ease-out" 
+                      style={{ width: `${fatProgress}%` }}
+                    />
                   </div>
                 </div>
               </div>
