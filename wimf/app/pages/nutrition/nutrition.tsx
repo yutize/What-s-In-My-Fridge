@@ -7,6 +7,7 @@ import { SectionCard } from "~/components/nutrition/SectionCard";
 import { ChatPanel } from "~/components/nutrition/ChatPanel";
 import type { NutritionProfile } from "~/types/nutrition";
 import type { FormUpdates } from "~/services/chatService";
+import { ThemeToggle } from "~/components/ThemeToggle";
 
 interface ActionData {
   success?: boolean;
@@ -52,12 +53,12 @@ export function Nutrition({
     if (nutritionProfile?.allergy && nutritionProfile.allergy !== "null") {
       initAllergies = JSON.parse(nutritionProfile.allergy);
     }
-  } catch {}
+  } catch { }
   try {
     if (nutritionProfile?.preference && nutritionProfile.preference !== "null") {
       initPreferences = JSON.parse(nutritionProfile.preference);
     }
-  } catch {}
+  } catch { }
 
   const [profileName, setProfileName] = useState(nutritionProfile?.profileName ?? "");
   const [caloriesLow, setCaloriesLow] = useState(nutritionProfile?.caloriesLow?.toString() ?? "");
@@ -68,7 +69,6 @@ export function Nutrition({
   const [allergies, setAllergies] = useState<string[]>(initAllergies);
   const [preferences, setPreferences] = useState<string[]>(initPreferences);
 
-  // ─── Handle AI-triggered form updates ────────────────────────────────────
   const handleFormUpdate = useCallback((updates: FormUpdates) => {
     if (updates.profileName !== undefined) setProfileName(updates.profileName);
     if (updates.caloriesLow !== undefined) setCaloriesLow(updates.caloriesLow.toString());
@@ -104,197 +104,238 @@ export function Nutrition({
   }
 
   return (
-    <>
-      <Navbar />
-
-      <main className="px-4 py-6 max-w-[1400px] mx-auto">
-        {/* Full-width page header */}
-        <div className="rounded-3xl p-8 mb-6 bg-white/65 dark:bg-gray-800 box-shadow-custom transition-colors duration-200">
-          <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-100">
-            My Nutrition Profile
+    <div className="bg-surface text-on-surface min-h-[100vh]">
+      
+      <header className="bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-xl fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 transition-all duration-300">
+        <div className="flex items-center gap-8">
+          <h1 className="text-2xl font-serif italic text-emerald-900 dark:text-emerald-100">
+            What's In My Fridge
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">
-            Configure your nutrition goals manually or chat with the AI to set them up instantly.
-          </p>
         </div>
+        <div className="flex items-center gap-6">
+          <a
+            href="/savedRecipes"
+            className="hidden md:flex items-center gap-2 px-4 py-2 text-primary font-semibold hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20 transition-all duration-300 rounded-xl text-sm"
+          >
+            <span className="material-symbols-outlined text-[20px]">bookmark</span>
+            Saved Recipes
+          </a>
+          <ThemeToggle />
+        </div>
+      </header>
 
-        {/* Split-panel layout */}
-        <div className="flex gap-6 items-stretch">
-          {/* ── Left Panel: Nutrition Profile Form (60%) ── */}
-          <div className="flex-[3] min-w-0">
-            <Form method="post" className="space-y-5">
-              {/* Hidden tracking fields */}
-              {nutritionProfile && (
-                <>
-                  <input type="hidden" name="originalProfileId" value={nutritionProfile.nutrition_id} />
-                  <input type="hidden" name="originalProfileName" value={nutritionProfile.profileName ?? ""} />
-                </>
-              )}
-              {/* Serialize controlled allergy/preference arrays as hidden inputs */}
-              <input type="hidden" name="allergiesJson" value={JSON.stringify(allergies)} />
-              <input type="hidden" name="preferencesJson" value={JSON.stringify(preferences)} />
+      <aside className="h-screen w-64 fixed left-0 top-0 hidden md:flex flex-col bg-stone-50 dark:bg-stone-950 pt-20 px-4">
+        <nav className="flex flex-col gap-2">
+          <a
+            className="text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-xl mx-2 flex items-center gap-4 px-4 py-3 transition-transform duration-200 hover:translate-x-1"
+            href="/dashboard"
+          >
+            <span className="material-symbols-outlined">explore</span>
+            <span className="font-label text-sm font-medium uppercase tracking-wider">
+              Discover
+            </span>
+          </a>
+          <a
+            className="text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-xl mx-2 flex items-center gap-4 px-4 py-3 transition-transform duration-200 hover:translate-x-1"
+            href="/ingredients"
+          >
+            <span className="material-symbols-outlined">restaurant</span>
+            <span className="font-label text-sm font-medium uppercase tracking-wider">
+              My Kitchen
+            </span>
+          </a>
 
-              {/* Profile Name */}
-              <SectionCard
-                title="My Nutrition Profile"
-                subtitle="Set your daily goals and dietary preferences."
-              >
-                <div className="mb-1">
-                  <label
-                    htmlFor="profileName"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
-                  >
-                    Profile Name
-                  </label>
-                  <input
-                    type="text"
-                    id="profileName"
-                    name="profileName"
-                    placeholder="e.g., My Fitness Goals, Weight Loss Plan"
-                    value={profileName}
-                    onChange={(e) => setProfileName(e.target.value)}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                  />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    💡 Tip: Set your daily goals and dietary preferences.
-                  </p>
+          <a
+            className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100 rounded-xl mx-2 flex items-center gap-4 px-4 py-3 transition-transform duration-200 hover:translate-x-1"
+            href="/nutrition"
+          >
+            <span className="material-symbols-outlined">person</span>
+            <span className="font-label text-sm font-medium uppercase tracking-wider">
+              Profile
+            </span>
+          </a>
+          <a
+            className="text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-xl mx-2 flex items-center gap-4 px-4 py-3 transition-transform duration-200 hover:translate-x-1"
+            href="/logout"
+          >
+            <span className="material-symbols-outlined">logout</span>
+            <span className="font-label text-sm font-medium uppercase tracking-wider">
+              Sign Out
+            </span>
+          </a>
+        </nav>
+        <div className="mt-auto pb-8 px-4">
+          <a
+            href="/recipes"
+            className="w-full bg-primary text-on-primary py-3 rounded-xl flex items-center justify-center gap-2 font-label font-bold text-sm tracking-widest hover:brightness-110 transition-all shadow-lg shadow-primary/20 cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-lg">add</span>
+            <span>NEW RECIPE</span>
+          </a>
+        </div>
+      </aside>
+
+      <main className="pt-24 pb-24 md:pb-20 md:pl-64 px-4 md:pr-8 mx-auto max-w-7xl min-h-screen lg:grid lg:grid-cols-12 lg:gap-12">
+        
+        <div className="lg:col-span-6 space-y-12">
+          
+          <header className="space-y-4">
+            <h1 className="text-5xl md:text-6xl text-on-surface font-headline italic tracking-tight">My Nutrition Profile</h1>
+            <p className="text-on-surface-variant max-w-2xl font-body leading-relaxed">Tailor your culinary experience by defining your nutritional boundaries and health goals. This data informs our AI recipe generation.</p>
+          </header>
+
+          <Form method="post" className="space-y-8">
+            <input type="hidden" name="originalProfileId" value={nutritionProfile?.nutrition_id || ""} />
+            <input type="hidden" name="originalProfileName" value={nutritionProfile?.profileName ?? ""} />
+            <input type="hidden" name="allergiesJson" value={JSON.stringify(allergies)} />
+            <input type="hidden" name="preferencesJson" value={JSON.stringify(preferences)} />
+
+            <div className="bg-surface-container-low p-8 rounded-xl space-y-4">
+              <label className="block text-xs font-bold uppercase tracking-widest text-primary font-label">Profile Name</label>
+              <input
+                name="profileName"
+                className="w-full bg-surface-container-lowest border-none rounded-lg p-4 text-xl font-headline focus:ring-2 focus:ring-primary/20 text-on-surface placeholder-outline-variant outline-none"
+                type="text"
+                placeholder="High Protein Profile"
+                value={profileName}
+                onChange={e => setProfileName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-6">
+              <div className="flex items-end justify-between">
+                <h2 className="text-3xl font-headline text-on-surface">Daily Meal Nutritional Goals</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div className="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4 font-label">Calories (kcal)</h3>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-1">
+                      <span className="text-[10px] uppercase text-outline font-bold">Min</span>
+                      <input name="caloriesLow" value={caloriesLow} onChange={e => setCaloriesLow(e.target.value)} type="number" className="w-full bg-transparent border-b border-outline-variant focus:border-primary focus:ring-0 p-2 font-headline text-2xl outline-none" />
+                    </div>
+                    <div className="flex-1">
+                      <span className="text-[10px] uppercase text-outline font-bold">Max</span>
+                      <input name="caloriesHigh" value={caloriesHigh} onChange={e => setCaloriesHigh(e.target.value)} type="number" className="w-full bg-transparent border-b border-outline-variant focus:border-primary focus:ring-0 p-2 font-headline text-2xl outline-none" />
+                    </div>
+                  </div>
                 </div>
-              </SectionCard>
 
-              {/* Daily Nutritional Goals */}
-              <SectionCard
-                title="Daily Meal Nutritional Goals"
-                subtitle="Set your desired daily nutritional goal for each meal."
-              >
-                <div className="grid grid-cols-2 gap-4">
-                  <NutritionInput
-                    label="Desired Calories Minimum"
-                    id="caloriesLow"
-                    name="caloriesLow"
-                    placeholder="400 kcal"
-                    unit="kcal"
-                    value={caloriesLow}
-                    onChange={setCaloriesLow}
-                  />
-                  <NutritionInput
-                    label="Desired Calories Maximum"
-                    id="caloriesHigh"
-                    name="caloriesHigh"
-                    placeholder="800 kcal"
-                    unit="kcal"
-                    value={caloriesHigh}
-                    onChange={setCaloriesHigh}
-                  />
-                  <NutritionInput
-                    label="Protein"
-                    id="protein"
-                    name="protein"
-                    placeholder="50g"
-                    unit="g"
-                    value={protein}
-                    onChange={setProtein}
-                  />
-                  <NutritionInput
-                    label="Carbohydrates"
-                    id="carbs"
-                    name="carbs"
-                    placeholder="45g"
-                    unit="g"
-                    value={carbs}
-                    onChange={setCarbs}
-                  />
-                  <NutritionInput
-                    label="Fat"
-                    id="fat"
-                    name="fat"
-                    placeholder="40g"
-                    unit="g"
-                    value={fat}
-                    onChange={setFat}
-                  />
+                <div className="bg-surface-container-low p-6 rounded-xl border-l-4 border-secondary">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4 font-label">Protein (g)</h3>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-1">
+                      <span className="text-[10px] uppercase text-outline font-bold">Min</span>
+                      
+                      <input name="protein" value={protein} onChange={e => setProtein(e.target.value)} type="number" className="w-full bg-transparent border-b border-outline-variant focus:border-primary focus:ring-0 p-2 font-headline text-2xl outline-none" />
+                    </div>
+                  </div>
                 </div>
-              </SectionCard>
 
-              {/* Allergies & Intolerances */}
-              <SectionCard
-                title="Allergies & Intolerances"
-                subtitle="Tell us about any of your allergies or food intolerances."
-              >
-                <div className="grid grid-cols-3 gap-3">
-                  {ALLERGY_OPTIONS.map((opt) => (
-                    <CheckboxOption
-                      key={opt.value}
-                      name="allergies"
-                      value={opt.value}
-                      label={opt.label}
-                      checked={allergies.includes(opt.value)}
-                      onChange={(chk) => toggleAllergy(opt.value, chk)}
-                    />
-                  ))}
+                <div className="bg-surface-container-low p-6 rounded-xl border-l-4 border-tertiary">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4 font-label">Carbs (g)</h3>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-1">
+                      <span className="text-[10px] uppercase text-outline font-bold">Max Limit</span>
+                      <input name="carbs" value={carbs} onChange={e => setCarbs(e.target.value)} type="number" className="w-full bg-transparent border-b border-outline-variant focus:border-primary focus:ring-0 p-2 font-headline text-2xl outline-none" />
+                    </div>
+                  </div>
                 </div>
-              </SectionCard>
 
-              {/* Dietary Preferences */}
-              <SectionCard
-                title="Dietary Preferences"
-                subtitle="Select any dietary preferences you follow."
-              >
-                <div className="grid grid-cols-3 gap-3">
-                  {DIET_OPTIONS.map((opt) => (
-                    <CheckboxOption
-                      key={opt.value}
-                      name="diet"
-                      value={opt.value}
-                      label={opt.label}
-                      checked={preferences.includes(opt.value)}
-                      onChange={(chk) => togglePreference(opt.value, chk)}
-                    />
-                  ))}
+                <div className="bg-surface-container-low p-6 rounded-xl border-l-4 border-outline">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4 font-label">Fat (g)</h3>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-1">
+                      <span className="text-[10px] uppercase text-outline font-bold">Max Limit</span>
+                      <input name="fat" value={fat} onChange={e => setFat(e.target.value)} type="number" className="w-full bg-transparent border-b border-outline-variant focus:border-primary focus:ring-0 p-2 font-headline text-2xl outline-none" />
+                    </div>
+                  </div>
                 </div>
-              </SectionCard>
 
-              {/* Submit */}
-              <div className="flex gap-4">
-                <button
-                  type="submit"
-                  id="save-nutrition-btn"
-                  className="flex-1 bg-emerald-600 text-white py-3 px-6 rounded-lg hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 font-medium transition-colors"
-                >
-                  Save Nutrition Profile
-                </button>
-                <button
-                  type="button"
-                  id="cancel-nutrition-btn"
-                  className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  Cancel
-                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+              <div className="space-y-6">
+                <h2 className="text-2xl font-headline text-on-surface">Allergies & Intolerances</h2>
+                <div className="flex flex-wrap gap-3">
+                  {ALLERGY_OPTIONS.map(opt => {
+                    const isChecked = allergies.includes(opt.value);
+                    return (
+                      <label key={opt.value} className="group cursor-pointer">
+                        <input className="hidden peer" type="checkbox" checked={isChecked} onChange={(e) => toggleAllergy(opt.value, e.target.checked)} />
+                        <span className="px-6 py-2 rounded-full border border-outline-variant peer-checked:bg-secondary-container peer-checked:border-secondary-container peer-checked:text-on-secondary-container text-sm font-label transition-all flex items-center gap-2">
+                          {isChecked && <span className="material-symbols-outlined text-sm">priority_high</span>}
+                          {opt.label}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* Success/error feedback */}
-              {actionData?.success && (
-                <div className="p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                  <p className="font-medium">✓ Nutrition Profile Saved!</p>
-                  <p className="text-sm">
-                    {actionData.message ?? "Your nutritional preferences have been updated successfully."}
-                  </p>
+              <div className="space-y-6">
+                <h2 className="text-2xl font-headline text-on-surface">Dietary Preferences</h2>
+                <div className="flex flex-wrap gap-3">
+                  {DIET_OPTIONS.map(opt => {
+                    const isChecked = preferences.includes(opt.value);
+                    return (
+                      <label key={opt.value} className="group cursor-pointer">
+                        <input className="hidden peer" type="checkbox" checked={isChecked} onChange={(e) => togglePreference(opt.value, e.target.checked)} />
+                        <span className="px-6 py-2 rounded-full border border-outline-variant peer-checked:bg-primary-container peer-checked:border-primary-container peer-checked:text-on-primary-container text-sm font-label transition-all flex items-center gap-2">
+                          {isChecked && <span className="material-symbols-outlined text-sm">check</span>}
+                          {opt.label}
+                        </span>
+                      </label>
+                    );
+                  })}
                 </div>
-              )}
-              {actionData?.success === false && (
-                <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                  <p className="font-medium">✗ Save Failed</p>
-                  <p className="text-sm">
-                    {actionData.message ?? "Something went wrong. Please try again."}
-                  </p>
-                </div>
-              )}
-            </Form>
-          </div>
+              </div>
 
-          {/* ── Right Panel: AI Chatbot (40%) ── */}
-          <div className="flex-[2] min-w-0 relative">
-            <div className="absolute inset-0">
+            </div>
+
+            <div className="flex items-center gap-4 pt-8">
+              <button type="submit" className="bg-primary text-on-primary px-10 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-primary-dim transition-all shadow-lg shadow-primary/10">
+                Save Nutrition Profile
+              </button>
+              <button type="button" className="bg-surface-container-high text-on-surface px-10 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-surface-container-highest transition-all">
+                Cancel
+              </button>
+            </div>
+
+            {actionData?.success && (
+              <div className="p-4 bg-tertiary-container text-on-tertiary-container rounded-xl font-body">
+                <p className="font-bold tracking-widest uppercase text-xs">✓ Nutrition Profile Saved!</p>
+                <p className="text-sm mt-1">{actionData.message ?? "Your nutritional preferences have been updated successfully."}</p>
+              </div>
+            )}
+            {actionData?.success === false && (
+              <div className="p-4 bg-error-container text-on-error-container rounded-xl font-body">
+                <p className="font-bold tracking-widest uppercase text-xs">✗ Save Failed</p>
+                <p className="text-sm mt-1">{actionData.message ?? "Something went wrong. Please try again."}</p>
+              </div>
+            )}
+
+          </Form>
+        </div>
+
+        <aside className="lg:col-span-6 mt-12 lg:mt-0 relative">
+          <div className="sticky top-24 bg-surface-container-lowest rounded-xl p-6 shadow-xl shadow-on-surface/5 border border-outline-variant/10 flex flex-col h-[calc(100vh-8rem)] min-h-[600px] max-h-[1000px] overflow-hidden">
+
+            <div className="flex items-center space-x-3 mb-6 shrink-0">
+              <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined">auto_awesome</span>
+              </div>
+              <div>
+                <h3 className="font-headline text-xl leading-none">AI Nutrition Assistant</h3>
+                <span className="text-[10px] uppercase font-bold tracking-tighter text-outline-variant">Powered by Gastronomist AI</span>
+              </div>
+            </div>
+
+            <div className="flex-1 min-h-0 relative -mx-4 px-4 overflow-hidden">
               <ChatPanel
                 onFormUpdate={handleFormUpdate}
                 currentProfile={currentProfileSnapshot}
@@ -308,9 +349,33 @@ export function Nutrition({
                 }
               />
             </div>
+
           </div>
-        </div>
+        </aside>
+
       </main>
-    </>
+
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-stone-50/90 backdrop-blur-xl flex items-center justify-around px-6 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <a href="/dashboard" className="text-stone-500 flex flex-col items-center gap-0.5">
+          <span className="material-symbols-outlined">explore</span>
+          <span className="text-[9px] font-label font-bold uppercase tracking-tighter">
+            Discover
+          </span>
+        </a>
+        <a href="/ingredients" className="text-stone-500 flex flex-col items-center gap-0.5">
+          <span className="material-symbols-outlined">restaurant</span>
+          <span className="text-[9px] font-label font-bold uppercase tracking-tighter">
+            Kitchen
+          </span>
+        </a>
+
+        <a
+          href="/nutrition"
+          className="bg-primary text-white p-3 rounded-full -translate-y-4 shadow-lg shadow-primary/40 ring-4 ring-background flex flex-col items-center gap-0.5"
+        >
+          <span className="material-symbols-outlined">person</span>
+        </a>
+      </nav>
+    </div>
   );
 }
