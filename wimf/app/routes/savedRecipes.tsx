@@ -15,29 +15,42 @@ export function meta({}: Route.MetaArgs) {
 export async function loader({ request }: Route.LoaderArgs) {
   await requireUserId(request);
   const userId = await getUserId(request);
+
+  const user = db.prepare(`SELECT firstName FROM Users WHERE user_id = ?`).get(userId) as { firstName: string } | undefined;
   
   const savedRecipes = db.prepare(
     "SELECT * FROM RecipeSave WHERE user_id = ? ORDER BY recipe_id DESC"
   ).all(userId);
 
-  console.log('Saved recipes for user:', userId, savedRecipes);
+  const inventoryCount = db.prepare(`
+    SELECT COUNT(*) as count 
+    FROM Inventory 
+    WHERE user_id = ?
+  `).get(userId) as { count: number };
   
-  return { savedRecipes };
+  return { 
+    user: user?.firstName || "User", 
+    savedRecipes, 
+    inventoryCount: inventoryCount.count 
+  };
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const userId = await getUserId(request);
-  const formData = await request.formData();
-  const actionType = formData.get('actionType') as string;
+  try {
+    const userId = await getUserId(request);
+    const formData = await request.formData();
+    const actionType = formData.get('actionType') as string;
 
-  if (actionType === 'deleteRecipe') {
-    const recipeId = parseInt(formData.get('recipeId') as string);
-    const result = await deleteSavedRecipe(recipeId, userId);
-    
-    return redirect('/savedRecipes');
+    if (actionType === 'deleteRecipe') {
+      const recipeId = parseInt(formData.get('recipeId') as string);
+      await deleteSavedRecipe(recipeId, userId);
+      return redirect('/savedRecipes');
+    }
+    return null;
+  } catch (error) {
+    console.error('Action failed:', error);
+    return { success: false, message: 'Failed to delete recipe.' };
   }
-
-  return null;
 }
 
 export default function SavedRecipesRoute() {
