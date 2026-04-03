@@ -1,336 +1,638 @@
-import { Form } from "react-router";
-import logoDark from "./logo-dark.svg";
-import logoLight from "./logo-light.svg";
-import { Navbar } from "~/components/navbar/navbar";
+import { Form, useNavigation } from "react-router";
 import type { SavedRecipe } from "~/types/recipe";
 import type { NutritionProfile } from "~/types/nutrition";
 import type { ProfileOption, InventoryItem } from "~/types/dashboard";
+import type { RecipePicksResult, RecipePick } from "~/services/recipePicksService";
+import { ThemeToggle } from "~/components/ThemeToggle";
 
 interface ExpiringItem extends InventoryItem {
   days_until_expiration: number;
 }
 
-export function Dashboard( { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems, expiringSoonItems = [] }: { user: any; savedRecipes: SavedRecipe[]; nutritionProfile: NutritionProfile | null; allProfiles: ProfileOption[]; inventoryItems: InventoryItem[]; expiringSoonItems?: ExpiringItem[] }) {
+const TAG_STYLES: Record<string, { pill: string; label: string }> = {
+  primary: {
+    pill: "bg-primary/90 text-on-primary",
+    label: "text-primary",
+  },
+  secondary: {
+    pill: "bg-secondary/90 text-on-secondary",
+    label: "text-secondary",
+  },
+  tertiary: {
+    pill: "bg-tertiary/90 text-on-tertiary",
+    label: "text-tertiary",
+  },
+};
+
+function recipeHref(pick: RecipePick): string {
+    return pick.url; // opens Edamam source in a new tab (handled with target="_blank")
+  }
+  const q = encodeURIComponent(pick.name);
+  return `/recipes?q=${q}`;
+}
+
+function SkeletonFeatured() {
   return (
-    <>
-   <Navbar />
+    <div className="animate-pulse relative overflow-hidden rounded-3xl bg-surface-container shadow-lg aspect-[4/5]">
+      <div className="absolute inset-0 bg-surface-container-high" />
+      <div className="absolute bottom-0 p-8 space-y-3 w-full">
+        <div className="flex gap-2">
+          <div className="h-5 w-20 rounded-full bg-surface-container-highest" />
+          <div className="h-5 w-24 rounded-full bg-surface-container-highest" />
+        </div>
+        <div className="h-8 w-56 rounded bg-surface-container-highest" />
+        <div className="h-4 w-48 rounded bg-surface-container-highest" />
+      </div>
+    </div>
+  );
+}
 
-    <main className="flex flex-col items-center px-6 py-8 gap-10 max-w-[1400px] mx-auto">
-      {/* Welcome Banner */}
-      <div className="w-full">
-        <div className="rounded-3xl p-12 welcome-gradient bg-transparent dark:bg-transparent shadow-lg relative overflow-hidden">
-          <div className="absolute inset-0 rounded-3xl" style={{background: 'linear-gradient(to right, transparent 0%, rgba(5, 150, 105, 0.3) 100%)'}}></div>
-          <div className="relative z-10">
-            <h1 className="text-3xl font-bold text-white">Welcome back, {user}!</h1>
-            <h2 className="text-xl text-white">Ready to create something delicious today?</h2>
-          </div>
+function SkeletonSmallCard() {
+  return (
+    <div className="animate-pulse bg-surface-container-lowest rounded-3xl p-4 shadow-sm flex gap-4">
+      <div className="w-32 h-32 rounded-2xl bg-surface-container shrink-0" />
+      <div className="flex flex-col justify-center space-y-2.5 flex-1">
+        <div className="h-3 w-14 rounded bg-surface-container" />
+        <div className="h-5 w-40 rounded bg-surface-container" />
+        <div className="h-3 w-36 rounded bg-surface-container" />
+        <div className="flex gap-3 mt-1">
+          <div className="h-3 w-10 rounded bg-surface-container" />
+          <div className="h-3 w-10 rounded bg-surface-container" />
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* My Fridge & This Week's Meals Row */}
-      <div className="w-full grid grid-cols-2 gap-6">
-        {/* My Fridge */}
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom flex flex-col h-[300px]">
-          <div className="flex justify-between items-center mb-4 flex-shrink-0">
-            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">My Fridge</h2>
-            <a href="/ingredients" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>Manage Inventory</a>
-          </div>
-          <div className="space-y-3 flex-1 flex flex-col min-h-0 overflow-hidden">
-            <div className="flex gap-3 flex-shrink-0">
-              <div className="flex-1 rounded-lg p-3" style={{backgroundColor: 'rgba(38, 155, 89, 0.2)'}}>
-                <p className="text-xs text-gray-600 mb-1">Total Items</p>
-                <p className="text-2xl font-bold text-gray-700">{inventoryItems.length}</p>
-              </div>
-            </div>
-            
-            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-              <p className="text-xs font-medium text-gray-700 mb-2 flex-shrink-0">Recent Ingredients</p>
-              <div className="flex-1 overflow-y-auto space-y-2" style={{scrollbarWidth: 'thin', scrollbarColor: 'rgba(38, 155, 89, 0.5) transparent'}}>
-                {inventoryItems.length > 0 ? (
-                  inventoryItems.map((item) => (
-                    <div key={item.inventory_id} className="flex items-center justify-between p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-700 truncate">{item.ingredient_name}</p>
-                        <p className="text-xs text-gray-500">
-                          {item.quantity} {item.unit || 'unit(s)'}
-                          {item.expiration_date && ` • Exp: ${new Date(item.expiration_date).toLocaleDateString()}`}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
-                    <p className="mb-2">No ingredients yet</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+function EditorsPicks({ picks, isLoading }: { picks: RecipePicksResult | null; isLoading: boolean }) {
+  const featured = picks?.featured;
+  const card2 = picks?.picks?.[1];
 
-        {/* Saved Meals */}
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom flex flex-col h-[300px]">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">Saved Meals</h2>
-            <a href="/savedRecipes" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>View All</a>
-          </div>
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2" style={{scrollbarWidth: 'thin', scrollbarColor: 'rgba(38, 155, 89, 0.5) transparent'}}>
-            {savedRecipes.length > 0 ? (
-              savedRecipes.map((recipe, index) => {
-                const colors = [
-                  { bg: 'rgba(20, 184, 166, 0.2)', badge: 'bg-teal-500' },
-                  { bg: 'rgba(234, 179, 8, 0.2)', badge: 'bg-yellow-500' },
-                  { bg: 'rgba(59, 130, 246, 0.2)', badge: 'bg-blue-500' },
-                  { bg: 'rgba(147, 51, 234, 0.2)', badge: 'bg-purple-500' },
-                  { bg: 'rgba(236, 72, 153, 0.2)', badge: 'bg-pink-500' },
-                ];
-                const colorScheme = colors[index % colors.length];
-                
-                return (
-                  <div key={recipe.recipe_id} className="flex items-center gap-4 h-[55px] rounded-lg p-5" style={{backgroundColor: colorScheme.bg}}>
-                    <span className={`${colorScheme.badge} text-white px-3 py-1 rounded text-sm font-medium w-[55px] flex items-center justify-center flex-shrink-0`}>#{index + 1}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-gray-700 dark:text-gray-700 line-clamp-1">{recipe.recipe_name}</p>
-                      <p className="text-xs text-gray-500">{recipe.servings} servings</p>
-                    </div>
-                    <img src={recipe.recipe_image} alt={recipe.recipe_name} className="w-[45px] h-[45px] object-cover rounded flex-shrink-0" />
-                  </div>
-                );
-              })
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
-                <p className="mb-2">No saved recipes yet</p>
-              </div>
-            )}
-          </div>
-        </div>
+  return (
+    <section>
+      <div className="flex justify-between items-center mb-8">
+        <h3 className="text-3xl font-serif">Editor's Picks</h3>
+        <a
+          className="text-primary font-label text-xs uppercase tracking-widest font-bold flex items-center gap-1 group"
+          href="/recipes"
+        >
+          Explore Archive
+          <span className="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">
+            arrow_forward
+          </span>
+        </a>
       </div>
 
-      {expiringSoonItems.length > 0 && (
-        <div className="w-full">
-          <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-3">
-                <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">⚠️ Ingredients to Expire Soon</h2>
-                <span className="px-3 py-1 bg-orange-100 text-orange-700 text-sm font-semibold rounded-full">
-                  {expiringSoonItems.length} item{expiringSoonItems.length > 1 ? 's' : ''}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {isLoading || !featured ? (
+          <SkeletonFeatured />
+        ) : (
+          <a
+            href={featured.url ?? `https://www.google.com/search?q=${encodeURIComponent(featured.name + " recipe")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative overflow-hidden rounded-3xl bg-surface-container-lowest shadow-lg block"
+          >
+            <div className="aspect-[4/5] overflow-hidden bg-surface-container">
+              {featured.image ? (
+                <img
+                  alt={featured.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  src={featured.image}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-6xl text-outline-variant">
+                    restaurant
+                  </span>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            </div>
+            <div className="absolute bottom-0 p-8 text-white">
+              <div className="flex gap-2 mb-3">
+                <span
+                  className={`px-3 py-1 ${TAG_STYLES[featured.tagColor]?.pill ?? "bg-primary/90 text-on-primary"} text-[10px] uppercase tracking-widest rounded-full font-label`}
+                >
+                  {featured.tag}
+                </span>
+                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-[10px] uppercase tracking-widest rounded-full font-label">
+                  Editor's Choice
                 </span>
               </div>
-              <a href="/ingredients" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>Manage All</a>
+              <h4 className="text-3xl font-serif leading-tight">{featured.name}</h4>
+              <p className="text-sm text-stone-200 mt-2 font-body max-w-xs">{featured.description}</p>
+              <div className="flex items-center gap-3 mt-3 text-stone-300 text-[11px]">
+                <span className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm">schedule</span>
+                  {featured.cookTime}
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm">trending_up</span>
+                  {featured.difficulty}
+                </span>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {expiringSoonItems.map((item) => {
-                const daysLeft = item.days_until_expiration;
-                const isUrgent = daysLeft <= 2;
-                const bgColor = isUrgent ? 'rgba(239, 68, 68, 0.1)' : 'rgba(251, 146, 60, 0.1)';
-                const borderColor = isUrgent ? '#ef4444' : '#fb923c';
+          </a>
+        )}
+
+        <div className="flex flex-col gap-6">
+          
+          {isLoading || !card1 ? (
+            <SkeletonSmallCard />
+          ) : (
+            <a
+              href={card1.url ?? `https://www.google.com/search?q=${encodeURIComponent(card1.name + " recipe")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-surface-container-lowest rounded-3xl p-4 shadow-sm flex gap-4 transition-all hover:shadow-md"
+            >
+              <div className="w-32 h-32 rounded-2xl overflow-hidden shrink-0 bg-surface-container">
+                {card1.image ? (
+                  <img
+                    alt={card1.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    src={card1.image}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="material-symbols-outlined text-3xl text-outline-variant">
+                      restaurant
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col justify-center">
+                <span
+                  className={`text-[10px] font-label uppercase tracking-widest ${TAG_STYLES[card1.tagColor]?.label ?? "text-secondary"} font-bold mb-1`}
+                >
+                  {card1.tag}
+                </span>
+                <h4 className="text-xl font-serif text-on-surface">{card1.name}</h4>
+                <p className="text-xs text-on-surface-variant mt-1">{card1.description}</p>
+                <div className="mt-3 flex items-center gap-3 text-stone-400">
+                  <div className="flex items-center gap-1 text-[10px]">
+                    <span className="material-symbols-outlined text-sm">schedule</span>
+                    {card1.cookTime}
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px]">
+                    <span className="material-symbols-outlined text-sm">trending_up</span>
+                    {card1.difficulty}
+                  </div>
+                </div>
+              </div>
+            </a>
+          )}
+
+          {isLoading || !card2 ? (
+            <SkeletonSmallCard />
+          ) : (
+            <a
+              href={card2.url ?? `https://www.google.com/search?q=${encodeURIComponent(card2.name + " recipe")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-surface-container-lowest rounded-3xl p-4 shadow-sm flex gap-4 transition-all hover:shadow-md"
+            >
+              <div className="w-32 h-32 rounded-2xl overflow-hidden shrink-0 bg-surface-container">
+                {card2.image ? (
+                  <img
+                    alt={card2.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    src={card2.image}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="material-symbols-outlined text-3xl text-outline-variant">
+                      restaurant
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col justify-center">
+                <span
+                  className={`text-[10px] font-label uppercase tracking-widest ${TAG_STYLES[card2.tagColor]?.label ?? "text-primary"} font-bold mb-1`}
+                >
+                  {card2.tag}
+                </span>
+                <h4 className="text-xl font-serif text-on-surface">{card2.name}</h4>
+                <p className="text-xs text-on-surface-variant mt-1">{card2.description}</p>
+                <div className="mt-3 flex items-center gap-3 text-stone-400">
+                  <div className="flex items-center gap-1 text-[10px]">
+                    <span className="material-symbols-outlined text-sm">schedule</span>
+                    {card2.cookTime}
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px]">
+                    <span className="material-symbols-outlined text-sm">trending_up</span>
+                    {card2.difficulty}
+                  </div>
+                </div>
+              </div>
+            </a>
+          )}
+
+          <Form method="post" className="flex-1">
+            <input type="hidden" name="actionType" value="surpriseMe" />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-full min-h-[100px] bg-primary-container/30 border-2 border-dashed border-primary/20 rounded-3xl flex flex-col items-center justify-center p-8 text-center hover:bg-primary-container/50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <>
+                  <span className="material-symbols-outlined text-primary text-4xl mb-2 animate-spin">
+                    autorenew
+                  </span>
+                  <h5 className="font-serif text-lg text-on-primary-container">Generating…</h5>
+                  <p className="text-xs text-on-primary-container/70 font-body max-w-[180px] mt-1">
+                    Asking our AI for a surprise pick…
+                  </p>
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-primary text-4xl mb-2">
+                    auto_awesome
+                  </span>
+                  <h5 className="font-serif text-lg text-on-primary-container">Surprise Me</h5>
+                  <p className="text-xs text-on-primary-container/70 font-body max-w-[180px] mt-1">
+                    Let our AI pick a random gourmet recipe for you.
+                  </p>
+                </>
+              )}
+            </button>
+          </Form>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function Dashboard({
+  user,
+  savedRecipes,
+  nutritionProfile,
+  allProfiles,
+  inventoryItems,
+  recipePicks,
+}: {
+  user: any;
+  savedRecipes: SavedRecipe[];
+  nutritionProfile: NutritionProfile | null;
+  allProfiles: ProfileOption[];
+  inventoryItems: InventoryItem[];
+  expiringSoonItems?: ExpiringItem[];
+  recipePicks: RecipePicksResult | null;
+}) {
+  const navigation = useNavigation();
+  const isSurprising =
+    navigation.state === "submitting" &&
+    navigation.formData?.get("actionType") === "surpriseMe";
+
+  return (
+    <div className="bg-surface text-on-surface min-h-[100vh]">
+      
+      <header className="bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-xl fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16">
+        <div className="flex items-center gap-8">
+          <h1 className="text-2xl font-serif italic text-emerald-900 dark:text-emerald-100">
+            What's In My Fridge
+          </h1>
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-4 text-xs font-label uppercase tracking-widest text-on-surface-variant">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-primary rounded-full" />
+              <span>{inventoryItems.length} items in fridge</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-secondary rounded-full" />
+              <span>{savedRecipes.length} saved recipes</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
+            <div className="h-8 w-8 rounded-full ring-2 ring-primary/10 flex items-center justify-center font-bold text-sm bg-primary text-on-primary">
+              {user.charAt(0).toUpperCase()}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <aside className="h-screen w-64 fixed left-0 top-0 hidden md:flex flex-col bg-stone-50 dark:bg-stone-950 pt-20 px-4">
+        <nav className="flex flex-col gap-2">
+          <a
+            className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100 rounded-xl mx-2 flex items-center gap-4 px-4 py-3 transition-transform duration-200 hover:translate-x-1"
+            href="/dashboard"
+          >
+            <span className="material-symbols-outlined">explore</span>
+            <span className="font-label text-sm font-medium uppercase tracking-wider">Discover</span>
+          </a>
+          <a
+            className="text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-xl mx-2 flex items-center gap-4 px-4 py-3 transition-transform duration-200 hover:translate-x-1"
+            href="/ingredients"
+          >
+            <span className="material-symbols-outlined">restaurant</span>
+            <span className="font-label text-sm font-medium uppercase tracking-wider">My Kitchen</span>
+          </a>
+
+          <a
+            className="text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-xl mx-2 flex items-center gap-4 px-4 py-3 transition-transform duration-200 hover:translate-x-1"
+            href="/nutrition"
+          >
+            <span className="material-symbols-outlined">person</span>
+            <span className="font-label text-sm font-medium uppercase tracking-wider">Profile</span>
+          </a>
+          <a
+            className="text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-xl mx-2 flex items-center gap-4 px-4 py-3 transition-transform duration-200 hover:translate-x-1"
+            href="/logout"
+          >
+            <span className="material-symbols-outlined">logout</span>
+            <span className="font-label text-sm font-medium uppercase tracking-wider">Sign Out</span>
+          </a>
+        </nav>
+        <div className="mt-auto pb-8 px-4">
+          <a
+            href="/recipes"
+            className="w-full bg-primary text-on-primary py-3 rounded-xl flex items-center justify-center gap-2 font-label font-bold text-sm tracking-widest hover:brightness-110 transition-all shadow-lg shadow-primary/20 cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-lg">add</span>
+            <span>NEW RECIPE</span>
+          </a>
+        </div>
+      </aside>
+
+      <main className="pt-24 pb-20 md:pl-64 px-4 md:pr-8 min-h-screen">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          <div className="lg:col-span-8 flex flex-col gap-10">
+            
+            <section>
+              <span className="font-label text-xs uppercase tracking-[0.2em] text-primary font-bold">
+                Good Morning, {user}
+              </span>
+              <h2 className="text-4xl md:text-5xl font-serif mt-2 text-on-surface">
+                What's on the menu today?
+              </h2>
+            </section>
+
+            <section className="bg-surface-container-low rounded-3xl p-8">
+              <div className="flex justify-between items-end mb-8">
+                <div>
+                  <h3 className="text-2xl font-serif text-on-surface">Nutrition Hub</h3>
+                  <p className="text-sm text-on-surface-variant font-body">
+                    Tracking your daily editorial balance
+                  </p>
+                </div>
+                <a
+                  href="/nutrition"
+                  className="text-xs font-label uppercase tracking-widest text-primary font-semibold hover:underline"
+                >
+                  {nutritionProfile ? "Manage Profile" : "Setup Profile"}
+                </a>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 
-                return (
-                  <div 
-                    key={item.inventory_id} 
-                    className="rounded-lg p-4 border-2 transition hover:shadow-md"
-                    style={{backgroundColor: bgColor, borderColor: borderColor}}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-gray-700 text-sm flex-1">{item.ingredient_name}</h3>
-                      <span className={`px-2 py-1 text-xs font-bold rounded ${isUrgent ? 'bg-red-500 text-white' : 'bg-orange-500 text-white'}`}>
-                        {daysLeft === 0 ? 'Today!' : daysLeft === 1 ? '1 day' : `${daysLeft} days`}
+                <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="material-symbols-outlined text-primary text-xl">
+                      local_fire_department
+                    </span>
+                    <span className="text-xs font-label uppercase tracking-wider text-on-surface-variant">
+                      Calories
+                    </span>
+                  </div>
+                  <div className="text-2xl font-serif text-on-surface">
+                    {nutritionProfile?.caloriesLow ? `${nutritionProfile.caloriesLow}` : "N/A"}
+                    {nutritionProfile?.caloriesHigh ? `–${nutritionProfile.caloriesHigh}` : ""}
+                  </div>
+                  <div className="mt-2 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+                    <div className="h-full bg-primary w-[75%] rounded-full" />
+                  </div>
+                </div>
+                
+                <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="material-symbols-outlined text-secondary text-xl">
+                      fitness_center
+                    </span>
+                    <span className="text-xs font-label uppercase tracking-wider text-on-surface-variant">
+                      Protein
+                    </span>
+                  </div>
+                  <div className="text-2xl font-serif text-on-surface">
+                    {nutritionProfile?.protein || "-"}
+                    <span className="text-sm font-body ml-1">g</span>
+                  </div>
+                  <div className="mt-2 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+                    <div className="h-full bg-secondary w-[60%] rounded-full" />
+                  </div>
+                </div>
+                
+                <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="material-symbols-outlined text-tertiary text-xl">
+                      bakery_dining
+                    </span>
+                    <span className="text-xs font-label uppercase tracking-wider text-on-surface-variant">
+                      Carbs
+                    </span>
+                  </div>
+                  <div className="text-2xl font-serif text-on-surface">
+                    {nutritionProfile?.carbs || "-"}
+                    <span className="text-sm font-body ml-1">g</span>
+                  </div>
+                  <div className="mt-2 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+                    <div className="h-full bg-tertiary w-[45%] rounded-full" />
+                  </div>
+                </div>
+                
+                <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="material-symbols-outlined text-outline text-xl">water_drop</span>
+                    <span className="text-xs font-label uppercase tracking-wider text-on-surface-variant">
+                      Fats
+                    </span>
+                  </div>
+                  <div className="text-2xl font-serif text-on-surface">
+                    {nutritionProfile?.fat || "-"}
+                    <span className="text-sm font-body ml-1">g</span>
+                  </div>
+                  <div className="mt-2 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+                    <div className="h-full bg-on-surface-variant w-[30%] rounded-full" />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <EditorsPicks picks={recipePicks} isLoading={isSurprising} />
+          </div>
+
+          <div className="lg:col-span-4 flex flex-col gap-8">
+            <section className="bg-surface-container p-8 rounded-[2rem] sticky top-24">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-serif text-on-surface">Kitchen Management</h3>
+                <a href="/ingredients" className="text-primary">
+                  <span className="material-symbols-outlined text-sm">open_in_new</span>
+                </a>
+              </div>
+
+              <div className="space-y-4">
+                
+                {inventoryItems.length > 0 ? (
+                  <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
+                    {inventoryItems.slice(0, 5).map((item) => (
+                      <div
+                        key={item.inventory_id}
+                        className="flex justify-between items-center p-3 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <span className="material-symbols-outlined text-sm">kitchen</span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-on-surface">
+                              {item.ingredient_name}
+                            </p>
+                            <p className="text-[10px] text-on-surface-variant uppercase tracking-wider">
+                              {item.category || "General"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-bold text-on-surface">{item.quantity}</p>
+                          <p className="text-[10px] text-on-surface-variant">{item.unit}</p>
+                        </div>
+                      </div>
+                    ))}
+                    {inventoryItems.length > 5 && (
+                      <a
+                        href="/ingredients"
+                        className="block text-center text-xs font-label text-primary font-bold uppercase tracking-widest hover:underline mt-2"
+                      >
+                        View all {inventoryItems.length} items
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <div className="bg-surface-container-lowest rounded-2xl p-8 flex flex-col items-center text-center border-2 border-dashed border-outline-variant/30">
+                    <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mb-3">
+                      <span className="material-symbols-outlined text-outline-variant text-2xl">
+                        kitchen
                       </span>
                     </div>
-                    <div className="space-y-1 text-xs text-gray-600">
-                      <p>Quantity: {item.quantity} {item.unit || 'unit(s)'}</p>
-                      <p>Category: {item.category || 'Other'}</p>
-                      <p className="font-medium">Expires: {new Date(item.expiration_date!).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-700">
-                Use these ingredients soon to avoid waste! Try searching for recipes with them in the Recipe Search page.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Recommended for You */}
-      <div className="w-full">
-        <div className="rounded-3xl p-6 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-700">Recommended for You</h2>
-            <a href="/recipes" className="text-sm font-medium hover:opacity-80" style={{color: '#269b59'}}>See All Recipes</a>
-          </div>
-          <div className="flex justify-center items-center gap-12">
-            <div className="w-[200px] h-[250px] rounded-xl p-4 dark:border-gray-600 box-shadow-small flex flex-col">
-              <img src="/recipes/lemonbuttergarlicsalmon.jpg" alt="Lemon Butter Garlic Salmon" className="w-full h-[150px] object-cover rounded-lg mb-4" />
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-700 line-clamp-2">Lemon Butter Garlic Salmon</p>
-            </div>
-            <div className="w-[200px] h-[250px] rounded-xl p-4 dark:border-gray-600 box-shadow-small flex flex-col">
-              <img src="/recipes/marrymechicken.jpg" alt="Marry Me Chicken" className="w-full h-[150px] object-cover rounded-lg mb-4" />
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-700 line-clamp-2">Merry Me Chicken</p>
-            </div>
-            <div className="w-[200px] h-[250px] rounded-xl p-4 dark:border-gray-600 box-shadow-small flex flex-col">
-              <img src="/recipes/creamypastacarbanara.jpg" alt="Creamy Pasta Carbonara" className="w-full h-[150px] object-cover rounded-lg mb-4" />
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-700 line-clamp-2">Creamy Pasta Carbonara</p>
-            </div>
-            <div className="w-[200px] h-[250px] rounded-xl p-4 dark:border-gray-600 box-shadow-small flex flex-col">
-              <img src="/recipes/rainbowsalad.jpeg" alt="Rainbow Salad" className="w-full h-[150px] object-cover rounded-lg mb-4" />
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-700 line-clamp-2">Rainbow Salad</p>
-            </div>
-            <div className="w-[200px] h-[250px] rounded-xl p-4 dark:border-gray-600 box-shadow-small flex flex-col">
-              <img src="/recipes/tuscanchickenpasta.jpg" alt="Creamy Tuscan Pasta" className="w-full h-[150px] object-cover rounded-lg mb-4" />
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-700 line-clamp-2">Creamy Tuscan Pasta</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Nutrition Profile Overview */}
-      <div className="w-full">
-        <div className="rounded-3xl p-8 dark:border-gray-700 bg-white/65 dark:bg-white/65 box-shadow-custom">
-          {/* Header with Profile Selector */}
-          <div className="flex justify-between items-start mb-8">
-            <div className="flex-1">
-              <div className="flex items-baseline gap-3 mb-2">
-                <h2 className="text-3xl font-bold text-gray-700 dark:text-gray-700">Nutrition Profile</h2>
-                {allProfiles.length > 1 && nutritionProfile && (
-                  <span className="text-sm text-gray-500">• Switch Profile:</span>
-                )}
-              </div>
-              
-              <div className="flex items-center gap-4 mt-3">
-                {nutritionProfile?.profileName && (
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{backgroundColor: '#269b59'}}></div>
-                    <p className="text-lg font-semibold" style={{color: '#269b59'}}>{nutritionProfile.profileName}</p>
-                  </div>
-                )}
-                
-                {allProfiles.length > 1 && nutritionProfile && (
-                  <Form method="post" className="flex-1 max-w-xs" preventScrollReset>
-                    <select 
-                      name="profileId" 
-                      onChange={(e) => e.currentTarget.form?.requestSubmit()}
-                      value={nutritionProfile.nutrition_id}
-                      className="w-full px-4 py-2.5 text-sm font-medium border-2 rounded-xl bg-white focus:ring-2 focus:outline-none transition-all shadow-sm hover:shadow-md"
-                      style={{borderColor: '#269b59', color: '#269b59'}}
+                    <h4 className="font-serif text-md mb-1">Your fridge is empty.</h4>
+                    <p className="text-[10px] text-on-surface-variant font-body">
+                      Add ingredients to get recipe recommendations.
+                    </p>
+                    <a
+                      href="/ingredients"
+                      className="mt-4 px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-label font-bold uppercase tracking-widest hover:bg-primary/20 transition-colors inline-block"
                     >
-                      {allProfiles.map((profile) => (
-                        <option key={profile.nutrition_id} value={profile.nutrition_id}>
-                          {profile.profileName || `Profile ${profile.nutrition_id}`}
-                        </option>
+                      Add Ingredients
+                    </a>
+                  </div>
+                )}
+
+                {expiringSoonItems.length > 0 && (
+                  <div className="pt-4">
+                    <h4 className="text-xs font-label uppercase tracking-widest text-on-surface-variant font-bold mb-4">
+                      Urgent Reminders
+                    </h4>
+                    <div className="space-y-3">
+                      {expiringSoonItems.map((item) => (
+                        <div
+                          key={item.inventory_id}
+                          className="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl"
+                        >
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              item.days_until_expiration <= 2 ? "bg-error" : "bg-tertiary"
+                            }`}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-body font-semibold truncate text-on-surface">
+                              {item.ingredient_name} ({item.quantity} {item.unit})
+                            </p>
+                            <p className="text-[10px] text-stone-500">
+                              {item.days_until_expiration === 0
+                                ? "Expires today!"
+                                : `${item.days_until_expiration} days remaining`}
+                            </p>
+                          </div>
+                          <a href="/ingredients">
+                            <span className="material-symbols-outlined text-stone-400 text-sm hover:text-primary transition-colors">
+                              chevron_right
+                            </span>
+                          </a>
+                        </div>
                       ))}
-                    </select>
-                  </Form>
+                    </div>
+                  </div>
                 )}
               </div>
-            </div>
-            
-            <a 
-              href="/nutrition" 
-              className="px-5 py-2.5 text-sm font-semibold text-white rounded-xl hover:opacity-90 transition-all shadow-md hover:shadow-lg"
-              style={{backgroundColor: '#269b59'}}
-            >
-              {nutritionProfile ? 'Edit Nutritional Profile' : '+ Set Up Profile'}
-            </a>
+
+              <div className="mt-8 p-6 bg-[#2d4436] rounded-2xl text-white">
+                <p className="text-[10px] font-label uppercase tracking-[0.2em] opacity-70">
+                  Kitchen Efficiency
+                </p>
+                <div className="flex items-end justify-between mt-2">
+                  <span className="text-3xl font-serif">
+                    {inventoryItems.length > 0
+                      ? `${Math.min(100, Math.round((inventoryItems.length / 20) * 100))}%`
+                      : "0%"}
+                  </span>
+                  <span className="text-[10px] font-body bg-white/20 px-2 py-0.5 rounded-full mb-1">
+                    {inventoryItems.length > 15
+                      ? "Zero Waste Hero"
+                      : inventoryItems.length > 5
+                      ? "Well Stocked"
+                      : "Getting Started"}
+                  </span>
+                </div>
+                <div className="mt-4 h-1 w-full bg-white/20 rounded-full">
+                  <div
+                    className="h-full bg-emerald-400 rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(100, Math.round((inventoryItems.length / 20) * 100))}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </section>
           </div>
-          
-          {nutritionProfile ? (
-            <div className="grid grid-cols-2 gap-6">
-              {/* Daily Goals Section */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">Daily Meal Goals</h3>
-                <div className="space-y-3">
-                  {nutritionProfile.caloriesLow && nutritionProfile.caloriesHigh && (
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{backgroundColor: 'rgba(239, 68, 68, 0.1)'}}>
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                        <span className="text-sm font-medium text-gray-700">Calories</span>
-                      </div>
-                      <span className="text-sm font-bold text-gray-700">{nutritionProfile.caloriesLow} - {nutritionProfile.caloriesHigh} kcal</span>
-                    </div>
-                  )}
-                  {nutritionProfile.protein && (
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{backgroundColor: 'rgba(147, 51, 234, 0.1)'}}>
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                        <span className="text-sm font-medium text-gray-700">Protein</span>
-                      </div>
-                      <span className="text-sm font-bold text-gray-700">{nutritionProfile.protein}g</span>
-                    </div>
-                  )}
-                  {nutritionProfile.carbs && (
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{backgroundColor: 'rgba(234, 179, 8, 0.1)'}}>
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                        <span className="text-sm font-medium text-gray-700">Carbs</span>
-                      </div>
-                      <span className="text-sm font-bold text-gray-700">{nutritionProfile.carbs}g</span>
-                    </div>
-                  )}
-                  {nutritionProfile.fat && (
-                    <div className="flex items-center justify-between p-3 rounded-lg" style={{backgroundColor: 'rgba(34, 197, 94, 0.1)'}}>
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                        <span className="text-sm font-medium text-gray-700">Fat</span>
-                      </div>
-                      <span className="text-sm font-bold text-gray-700">{nutritionProfile.fat}g</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              {/* Dietary Preferences Section */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">Dietary Preferences</h3>
-                <div className="space-y-4">
-                  {/* Allergies */}
-                  {nutritionProfile.allergy && JSON.parse(nutritionProfile.allergy).length > 0 && (
-                    <div>
-                      <p className="text-xs font-medium text-gray-600 mb-2">Allergies & Intolerances</p>
-                      <div className="flex flex-wrap gap-2">
-                        {JSON.parse(nutritionProfile.allergy).map((allergy: string, index: number) => (
-                          <span key={index} className="px-3 py-1 text-xs font-medium text-red-700 bg-red-100 rounded-full">
-                            {allergy}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Diet Preferences */}
-                  {nutritionProfile.preference && JSON.parse(nutritionProfile.preference).length > 0 && (
-                    <div>
-                      <p className="text-xs font-medium text-gray-600 mb-2">Diet Preferences</p>
-                      <div className="flex flex-wrap gap-2">
-                        {JSON.parse(nutritionProfile.preference).map((pref: string, index: number) => (
-                          <span key={index} className="px-3 py-1 text-xs font-medium text-white rounded-full" style={{backgroundColor: '#269b59'}}>
-                            {pref}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {(!nutritionProfile.allergy || JSON.parse(nutritionProfile.allergy).length === 0) && 
-                   (!nutritionProfile.preference || JSON.parse(nutritionProfile.preference).length === 0) && (
-                    <div className="flex items-center justify-center h-full text-sm text-gray-500">
-                      No dietary restrictions set
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <p className="text-gray-600 mb-4">You haven't set up your nutrition profile yet</p>
-            </div>
-          )}
         </div>
-      </div>
-   </main>
-   </>
-  )
-};
+      </main>
+
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-stone-50/90 backdrop-blur-xl flex items-center justify-around px-6 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <a href="/dashboard" className="text-emerald-900 flex flex-col items-center gap-0.5">
+          <span
+            className="material-symbols-outlined"
+            style={{ fontVariationSettings: "'FILL' 1" }}
+          >
+            explore
+          </span>
+          <span className="text-[9px] font-label font-bold uppercase tracking-tighter">
+            Discover
+          </span>
+        </a>
+        <a href="/ingredients" className="text-stone-500 flex flex-col items-center gap-0.5">
+          <span className="material-symbols-outlined">restaurant</span>
+          <span className="text-[9px] font-label font-bold uppercase tracking-tighter">
+            Kitchen
+          </span>
+        </a>
+        <a
+          href="/recipes"
+          className="bg-primary text-white p-3 rounded-full -translate-y-4 shadow-lg shadow-primary/40 ring-4 ring-background"
+        >
+          <span className="material-symbols-outlined">add</span>
+        </a>
+        <a href="/nutrition" className="text-stone-500 flex flex-col items-center gap-0.5">
+          <span className="material-symbols-outlined">person</span>
+          <span className="text-[9px] font-label font-bold uppercase tracking-tighter">
+            Profile
+          </span>
+        </a>
+      </nav>
+    </div>
+  );
+}
