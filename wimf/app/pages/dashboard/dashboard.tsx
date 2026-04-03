@@ -25,6 +25,7 @@ const TAG_STYLES: Record<string, { pill: string; label: string }> = {
 };
 
 function recipeHref(pick: RecipePick): string {
+  if (pick.url) {
     return pick.url; // opens Edamam source in a new tab (handled with target="_blank")
   }
   const q = encodeURIComponent(pick.name);
@@ -66,12 +67,13 @@ function SkeletonSmallCard() {
 
 function EditorsPicks({ picks, isLoading }: { picks: RecipePicksResult | null; isLoading: boolean }) {
   const featured = picks?.featured;
+  const card1 = picks?.picks?.[0];
   const card2 = picks?.picks?.[1];
 
   return (
     <section>
       <div className="flex justify-between items-center mb-8">
-        <h3 className="text-3xl font-serif">Editor's Picks</h3>
+        <h3 className="text-3xl font-serif">Our Picks!</h3>
         <a
           className="text-primary font-label text-xs uppercase tracking-widest font-bold flex items-center gap-1 group"
           href="/recipes"
@@ -84,7 +86,7 @@ function EditorsPicks({ picks, isLoading }: { picks: RecipePicksResult | null; i
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
+
         {isLoading || !featured ? (
           <SkeletonFeatured />
         ) : (
@@ -118,7 +120,7 @@ function EditorsPicks({ picks, isLoading }: { picks: RecipePicksResult | null; i
                   {featured.tag}
                 </span>
                 <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-[10px] uppercase tracking-widest rounded-full font-label">
-                  Editor's Choice
+                  AI's Choice
                 </span>
               </div>
               <h4 className="text-3xl font-serif leading-tight">{featured.name}</h4>
@@ -138,7 +140,7 @@ function EditorsPicks({ picks, isLoading }: { picks: RecipePicksResult | null; i
         )}
 
         <div className="flex flex-col gap-6">
-          
+
           {isLoading || !card1 ? (
             <SkeletonSmallCard />
           ) : (
@@ -273,6 +275,7 @@ export function Dashboard({
   nutritionProfile,
   allProfiles,
   inventoryItems,
+  expiringSoonItems = [],
   recipePicks,
 }: {
   user: any;
@@ -290,7 +293,7 @@ export function Dashboard({
 
   return (
     <div className="bg-surface text-on-surface min-h-[100vh]">
-      
+
       <header className="bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-xl fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16">
         <div className="flex items-center gap-8">
           <h1 className="text-2xl font-serif italic text-emerald-900 dark:text-emerald-100">
@@ -362,9 +365,9 @@ export function Dashboard({
 
       <main className="pt-24 pb-20 md:pl-64 px-4 md:pr-8 min-h-screen">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
+
           <div className="lg:col-span-8 flex flex-col gap-10">
-            
+
             <section>
               <span className="font-label text-xs uppercase tracking-[0.2em] text-primary font-bold">
                 Good Morning, {user}
@@ -390,7 +393,7 @@ export function Dashboard({
                 </a>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                
+
                 <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="material-symbols-outlined text-primary text-xl">
@@ -408,7 +411,7 @@ export function Dashboard({
                     <div className="h-full bg-primary w-[75%] rounded-full" />
                   </div>
                 </div>
-                
+
                 <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="material-symbols-outlined text-secondary text-xl">
@@ -426,7 +429,7 @@ export function Dashboard({
                     <div className="h-full bg-secondary w-[60%] rounded-full" />
                   </div>
                 </div>
-                
+
                 <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="material-symbols-outlined text-tertiary text-xl">
@@ -444,7 +447,7 @@ export function Dashboard({
                     <div className="h-full bg-tertiary w-[45%] rounded-full" />
                   </div>
                 </div>
-                
+
                 <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="material-symbols-outlined text-outline text-xl">water_drop</span>
@@ -476,7 +479,7 @@ export function Dashboard({
               </div>
 
               <div className="space-y-4">
-                
+
                 {inventoryItems.length > 0 ? (
                   <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
                     {inventoryItems.slice(0, 5).map((item) => (
@@ -544,9 +547,8 @@ export function Dashboard({
                           className="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl"
                         >
                           <div
-                            className={`w-2 h-2 rounded-full ${
-                              item.days_until_expiration <= 2 ? "bg-error" : "bg-tertiary"
-                            }`}
+                            className={`w-2 h-2 rounded-full ${item.days_until_expiration <= 2 ? "bg-error" : "bg-tertiary"
+                              }`}
                           />
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-body font-semibold truncate text-on-surface">
@@ -584,8 +586,8 @@ export function Dashboard({
                     {inventoryItems.length > 15
                       ? "Zero Waste Hero"
                       : inventoryItems.length > 5
-                      ? "Well Stocked"
-                      : "Getting Started"}
+                        ? "Well Stocked"
+                        : "Getting Started"}
                   </span>
                 </div>
                 <div className="mt-4 h-1 w-full bg-white/20 rounded-full">
