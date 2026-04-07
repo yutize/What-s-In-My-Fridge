@@ -68,39 +68,46 @@ export async function loader({ request }: Route.LoaderArgs) {
     })
     .filter((item) => item.days_until_expiration >= 0 && item.days_until_expiration <= 7);
 
-  // ── AI Editor's Picks ──────────────────────────────────────────────────────
-  let recipePicks: RecipePicksResult | null = null;
-  try {
-    const ingredientNames = (inventoryItems as InventoryItem[]).map((i) => i.ingredient_name);
-    const picks = await getAIRecipePicks(ingredientNames, nutritionProfile ?? null, false);
+  const fetchDeferredPicks = async () => {
+    try {
+      const ingredientNames = (inventoryItems as InventoryItem[]).map((i) => i.ingredient_name);
+      const picks = await getAIRecipePicks(ingredientNames, nutritionProfile ?? null, false);
 
-    // Enrich with Edamam images in parallel (best-effort — won't block if missing)
-    const [featuredDetail, pick1Detail, pick2Detail] = await Promise.all([
-      fetchEdamamRecipeDetail(picks.featured.name),
-      fetchEdamamRecipeDetail(picks.picks[0]?.name ?? ""),
-      fetchEdamamRecipeDetail(picks.picks[1]?.name ?? ""),
-    ]);
+      const [featuredDetail, pick1Detail, pick2Detail] = await Promise.all([
+        fetchEdamamRecipeDetail(picks.featured.name),
+        fetchEdamamRecipeDetail(picks.picks[0]?.name ?? ""),
+        fetchEdamamRecipeDetail(picks.picks[1]?.name ?? ""),
+      ]);
 
-    if (featuredDetail) {
-      picks.featured.image = featuredDetail.image;
-      picks.featured.url = featuredDetail.url;
+      if (featuredDetail) {
+        picks.featured.image = featuredDetail.image;
+        picks.featured.url = featuredDetail.url;
+      }
+      if (pick1Detail && picks.picks[0]) {
+        picks.picks[0].image = pick1Detail.image;
+        picks.picks[0].url = pick1Detail.url;
+      }
+      if (pick2Detail && picks.picks[1]) {
+        picks.picks[1].image = pick2Detail.image;
+        picks.picks[1].url = pick2Detail.url;
+      }
+
+      return picks;
+    } catch (err) {
+      console.error("AI recipe picks failed:", err);
+      return null;
     }
-    if (pick1Detail && picks.picks[0]) {
-      picks.picks[0].image = pick1Detail.image;
-      picks.picks[0].url = pick1Detail.url;
-    }
-    if (pick2Detail && picks.picks[1]) {
-      picks.picks[1].image = pick2Detail.image;
-      picks.picks[1].url = pick2Detail.url;
-    }
+  };
 
-    recipePicks = picks;
-  } catch (err) {
-    console.error("AI recipe picks failed:", err);
-    // recipePicks stays null — component will show a fallback
-  }
-
-  return { user, savedRecipes, nutritionProfile, allProfiles, inventoryItems, expiringSoonItems, recipePicks };
+  return { 
+    user, 
+    savedRecipes, 
+    nutritionProfile, 
+    allProfiles, 
+    inventoryItems, 
+    expiringSoonItems, 
+    recipePicksPromise: fetchDeferredPicks() 
+  };
 }
 
 export async function action(args: Route.ActionArgs) {
@@ -165,7 +172,6 @@ export function shouldRevalidate({ actionResult, defaultShouldRevalidate }: any)
 export default function DashboardRoute({ loaderData, actionData }: Route.ComponentProps) {
   // Prefer action data recipePicks (Surprise Me result) over loader data
   const fetcher = useFetcher();
-  const recipePicks = (actionData as any)?.recipePicks ?? loaderData.recipePicks;
   
   // To truly only update the hub in-place, prefer fetcher's newProfile
   const activeProfile = fetcher.data?.newProfile ?? loaderData.nutritionProfile;
@@ -177,6 +183,7 @@ export default function DashboardRoute({ loaderData, actionData }: Route.Compone
     allProfiles={(loaderData.allProfiles || []) as unknown as ProfileOption[]}
     inventoryItems={(loaderData.inventoryItems || []) as unknown as InventoryItem[]}
     expiringSoonItems={(loaderData.expiringSoonItems || []) as unknown as ExpiringItem[]}
-    recipePicks={recipePicks}
+    recipePicksPromise={loaderData.recipePicksPromise}
+    actionRecipePicks={(actionData as any)?.recipePicks}
   />;
 }
